@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoieBot", "ZoieBot\ZoieBot.csproj", "{C4F925FF-7B24-44A1-98BA-98EB23E9B052}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelperConsole", "HelperConsole\HelperConsole.csproj", "{F9F0EBA4-F997-43EC-8A20-A40C9269F483}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4F925FF-7B24-44A1-98BA-98EB23E9B052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F925FF-7B24-44A1-98BA-98EB23E9B052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F925FF-7B24-44A1-98BA-98EB23E9B052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F925FF-7B24-44A1-98BA-98EB23E9B052}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F0EBA4-F997-43EC-8A20-A40C9269F483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F0EBA4-F997-43EC-8A20-A40C9269F483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F0EBA4-F997-43EC-8A20-A40C9269F483}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F0EBA4-F997-43EC-8A20-A40C9269F483}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {23A4F7B9-26B2-4EED-AAD2-754ADFA075B0}
+	EndGlobalSection
+EndGlobal

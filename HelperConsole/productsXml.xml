@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mywebstore>
+  <created_at>2010-04-08 12:32</created_at>
+  <products>
+    <product>
+      <id>4615</id>
+      <name><![CDATA[Basic-Ισοθερμικά  ARMOUR HG LONG COMP SHORT ΣΟΡΤ UNDER ARMOUR ΜΑΥΡΟ]]></name>
+      <mpn>1257472-001</mpn>
+      <link><![CDATA[http://www.nespo.gr/el/detail/armour-hg-long-comp-short-sort-black-steel-s]]></link>
+      <Price>21</Price>
+      <category_path><![CDATA[Ανδρας - Ρούχα - Basic-Ισοθερμικά]]></category_path>
+      <image>http://www.nespo.gr/images/products/1257472/001/1257472-001-PHSFH-1300.jpg</image>
+      <availability>Παράδoση 1 έως 3 ημέρες</availability>
+      <Size><![CDATA[S]]></Size>
+      <Color><![CDATA[ΜΑΥΡΟ]]></Color>
+      <manufacturer><![CDATA[UNDER ARMOUR]]></manufacturer>
+    </product>
+  </products>
+</mywebstore>
