@@ -53,6 +53,9 @@ namespace Zoie.Bot.Dialogs.Main
             var activity = await result as Activity;
             var reply = activity.CreateReply($"What do you have in mind for {GeneralHelper.GetDaytime(activity.LocalTimestamp ?? activity.Timestamp)}?");
 
+            context.ConversationData.Clear();
+            context.PrivateConversationData.Clear();
+
             reply.SuggestedActions = new SuggestedActions()
             {
                 Actions = new List<CardAction>()

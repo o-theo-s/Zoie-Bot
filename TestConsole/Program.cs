@@ -12,9 +12,16 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            OccasionsRoot occasionsObject = new API<OccasionsRoot>().CallAsync().Result;
-            CollectionsRoot collectionsObject = new API<CollectionsRoot>().CallAsync(
-                new Dictionary<string, string> { { "occasion_id", "1" }, { "page", "0" } }).Result;
+            SearchModel search = new SearchModel
+            {
+                Color = "μαύρο",
+                Gender = "άντρας",
+                Max_Price = 100
+            };
+            var attr = search.GetAttributesDictionary();
+
+            var searchApparelsApi = new API<ApparelsRoot>();
+            var apparelsRoot = searchApparelsApi.CallAsync(attr).Result;
 
             Console.WriteLine("End\n");
             Console.ReadKey();

@@ -25,8 +25,8 @@ namespace Zoie.Bot.Dialogs.Main
             var activity = await result as Activity;
             var reply = activity.CreateReply();
 
-            reply.Text = DialogsHelper.GetResourceValue<HandshakeReplies>("HandshakeEntry", activity) + " " 
-                + DialogsHelper.GetResourceValue<HandshakeReplies>("HandshakeFollowUps", activity);
+            reply.Text = DialogsHelper.GetResourceValue<HandshakeReplies>("Entry", activity) + " " 
+                + DialogsHelper.GetResourceValue<HandshakeReplies>("FollowUps", activity);
             await context.PostAsync(reply);
 
 

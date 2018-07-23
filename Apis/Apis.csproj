@@ -47,9 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="Models\ApparelModel.cs" />
     <Compile Include="Models\CollectionModel.cs" />
     <Compile Include="Models\OccasionModel.cs" />
-    <Compile Include="Models\ApparelModel.cs" />
+    <Compile Include="Models\CollectionApparelModel.cs" />
+    <Compile Include="Models\SearchModel.cs" />
     <Compile Include="Models\StoreModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

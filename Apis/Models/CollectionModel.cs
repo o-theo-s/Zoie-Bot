@@ -11,8 +11,12 @@ namespace Apis.Models
         [JsonProperty(PropertyName = "collection_title")]
         public string Title { get; set; }
 
+        private string imageUrl;
         [JsonProperty(PropertyName = "collection_image")]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get { return imageUrl; } set { imageUrl = string.IsNullOrWhiteSpace(value) ? null : value; } }
+
+        [JsonProperty(PropertyName = "business_name")]
+        public string StoreName { get; set; }
     }
 
     public class CollectionsRoot
