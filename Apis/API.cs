@@ -40,13 +40,14 @@ namespace Apis
 
     public static class ApiNames
     {
-        public const string OccasionsList = "occasions.php";                            //-
-        public const string CollectionsList = "collections.php";                        //occasion_id, page
-        public const string Collection = "collection.php";                              //collection_id
-        public const string StoresList = "stores.php";                                  //page
+        internal const string OccasionsList = "occasions.php";                          //-
+        internal const string CollectionsList = "collections.php";                      //occasion_id, page, gender (women: 0, men: 1), created_by
+        internal const string Collection = "collection.php";                            //collection_id
+        internal const string StoresList = "stores.php";                                //page
         public const string CustomerService = "http://zoie.io/API/store_info.php";      //business_id, service_id
+        internal const string ApparelsSearch = "products-results.php";                  //manufacturer, type, gender, color, min_price, max_price, size, style, shop
 
-        public static string GetApiNameFromApiModelType<ApiType>()
+        internal static string GetApiNameFromApiModelType<ApiType>()
         {
             if (typeof(ApiType) == typeof(OccasionsRoot))
                 return ApiNames.OccasionsList;
@@ -56,6 +57,8 @@ namespace Apis
                 return ApiNames.Collection;
             else if (typeof(ApiType) == typeof(StoresRoot))
                 return ApiNames.StoresList;
+            else if (typeof(ApiType) == typeof(ApparelsRoot))
+                return ApiNames.ApparelsSearch;
             else
                 return string.Empty;
         }

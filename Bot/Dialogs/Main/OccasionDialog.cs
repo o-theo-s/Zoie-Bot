@@ -91,7 +91,13 @@ namespace Zoie.Bot.Dialogs.Main
             context.ConversationData.TryGetValue("CollectionsNextPage", out int currentPage);
 
             var collectionsApi = new API<CollectionsRoot>();
-            var collectionsRoot = await collectionsApi.CallAsync(new Dictionary<string, string>(2) { { "occasion_id", occasion.Id }, { "page", currentPage.ToString() } });
+            var collectionsRoot = await collectionsApi.CallAsync(
+                new Dictionary<string, string>(2)
+                {
+                    { "occasion_id", occasion.Id },
+                    { "page", currentPage.ToString() },
+                    { "gender", gender == "Female" ? "0" : "1" }
+                });
 
             if (collectionsRoot == null)
             {
@@ -128,6 +134,7 @@ namespace Zoie.Bot.Dialogs.Main
                 };
 
                 Collection collection;
+                //Random randImgSelector = new Random();
                 for (int i = 0; i < 3 && i < collectionsRoot.Collections.Count; i++)
                 {
                     collection = collectionsRoot.Collections[i];
@@ -135,9 +142,10 @@ namespace Zoie.Bot.Dialogs.Main
                         new FacebookGenericTemplateContent()
                         {
                             Title = GeneralHelper.CapitalizeFirstLetter(collection.Title),
-                            Subtitle = "By {store name}",
+                            Subtitle = $"By {collection.StoreName}",
                             Buttons = new[] { new FacebookPostbackButton(title: "View items", payload: $"__view_collection_{collection.Id}") },
-                            ImageUrl = collection.ImageUrl
+                            ImageUrl = collection.ImageUrl ??
+                                $"https://zoiebot.azurewebsites.net/Files/Images/Occasions/{occasion.Name}/{gender}/{i+1}.jpg"
                         });
                 }
 
@@ -191,7 +199,6 @@ namespace Zoie.Bot.Dialogs.Main
                 //TODO: Remove else if - It will work from persistent menu
                 else if (activity.Text == "__menu_new_search")
                 {
-                    context.ConversationData.RemoveValue("CollectionsNextPage");
                     await this.EndAsync(context, result);
                 }
             }
@@ -206,7 +213,6 @@ namespace Zoie.Bot.Dialogs.Main
             var activity = await result as Activity;
             var reply = activity.CreateReply();
 
-            Occasion occasion = context.ConversationData.GetValue<Occasion>("OccasionSelected");
             string gender = context.UserData.GetValue<string>("Gender");
             string collectionId = activity.Text.Remove(0, "__view_collection_".Length);
 
@@ -226,7 +232,7 @@ namespace Zoie.Bot.Dialogs.Main
 
             reply.Text = "Here you are!";
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-            foreach (var apparel in collectionApparelsRoot.Apparels)
+            foreach (var apparel in collectionApparelsRoot.Items)
             {
                 reply.Attachments.Add(
                     new HeroCard()
@@ -271,27 +277,30 @@ namespace Zoie.Bot.Dialogs.Main
         private async Task AfterShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
+            var reply = activity.CreateReply();
 
-            if (activity.Text.StartsWith("__"))
+            if (activity.Text.StartsWith("__feedback_rate"))
             {
-                if (activity.Text.StartsWith("__feedback_rate"))
-                {
-                    string[] feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
-                    int collectionId = int.Parse(feedbackData[0]);
-                    int rate = int.Parse(feedbackData[1]);
-                    //TODO: Store rate for collection
+                string[] feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                int collectionId = int.Parse(feedbackData[0]);
+                int rate = int.Parse(feedbackData[1]);
+                //TODO: Store rate for collection
 
-                    await context.PostAsync("Thank your for your feedback!");
-                    context.Done(activity);
-                }
-                else
+                reply.Text = "Thank your for your feedback!";
+                reply.SuggestedActions = new SuggestedActions()
                 {
-                    await this.AfterShowCollectionsForOccasionAsync(context, result);
-                }
+                    Actions = new List<CardAction>()
+                    {
+                        new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
+                        new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                    }
+                };
+                await context.PostAsync(reply);
+                context.Wait(AfterShowCollectionsForOccasionAsync);
             }
             else
             {
-                await context.Forward(new GlobalLuisDialog<object>(), EndAsync, activity);
+                await this.AfterShowCollectionsForOccasionAsync(context, result);
             }
         }
 

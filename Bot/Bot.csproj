@@ -228,24 +228,78 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="default.htm" />
-    <Content Include="Files\Images\StoresLogos\all_stores.png" />
-    <Content Include="Files\Images\StoresLogos\Bagiota_shoes.png" />
-    <Content Include="Files\Images\StoresLogos\Chicaclothing.png" />
-    <Content Include="Files\Images\Stores\cs-about0.jpg" />
-    <Content Include="Files\Images\Stores\cs-brands0.jpg" />
-    <Content Include="Files\Images\Stores\cs-returns0.jpg" />
-    <Content Include="Files\Images\Stores\cs-shipping0.jpg" />
-    <Content Include="Files\Images\Stores\store-window.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Cocktail\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Gym\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Interview\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Outdoor\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Party\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\University\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\University\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\University\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\University\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\University\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\University\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\University\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\University\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Wedding\Male\4.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Female\1.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Female\2.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Female\3.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Female\4.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Male\1.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Male\2.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Male\3.jpg" />
+    <Content Include="Files\Images\Occasions\Work\Male\4.jpg" />
+    <Content Include="Files\Images\Stores\cs-about.jpeg" />
+    <Content Include="Files\Images\Stores\cs-brands.jpeg" />
+    <Content Include="Files\Images\Stores\cs-returns.jpeg" />
+    <Content Include="Files\Images\Stores\cs-shipping.jpeg" />
     <Content Include="Files\Images\Stores\store-create.jpg" />
-    <Content Include="Files\Images\StoresLogos\Crossover_logo.png" />
-    <Content Include="Files\Images\StoresLogos\myshoestore-logo.png" />
-    <Content Include="Files\Images\StoresLogos\nespo_atletics.png" />
-    <Content Include="Files\Images\StoresLogos\paperinos_logo-green-homepage.png" />
-    <Content Include="Files\Images\StoresLogos\tshoes-logo.png" />
-    <Content Include="Files\Images\StoresLogos\xinosfashion-logo-1.png" />
-    <Content Include="Files\Images\StoresLogos\yiassou.png" />
-    <Content Include="Files\Images\Stores\store-help.jpeg" />
+    <Content Include="Files\Images\Stores\store-info.jpg" />
     <Content Include="Files\Images\Stores\store-shop.jpeg" />
+    <Content Include="Files\Images\Stores\store-window.jpeg" />
     <Content Include="Global.asax" />
     <Content Include="Files\Images\Occasions\cocktail.jpeg" />
     <Content Include="Files\Images\Occasions\gym.jpeg" />
@@ -272,7 +326,6 @@
     <Compile Include="Dialogs\Main\RootDialog.cs" />
     <Compile Include="Dialogs\Main\StoreDialog.cs" />
     <Compile Include="Dialogs\Scorables\SettingsScorable.cs" />
-    <Compile Include="Models\CollectionApparel.cs" />
     <Compile Include="Models\Referral.cs" />
     <Compile Include="Models\UserDataEntity.cs" />
     <Compile Include="Modules\GlobalMessageHandlersBotModule.cs" />
@@ -280,7 +333,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Apparel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +368,7 @@
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.132\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

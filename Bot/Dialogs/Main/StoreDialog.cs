@@ -63,7 +63,6 @@ namespace Zoie.Bot.Dialogs.Main
                     new HeroCard()
                     {
                         Title = GeneralHelper.CapitalizeFirstLetter(store.Name),
-                        Subtitle = store.Link,
                         Images = new List<CardImage> { new CardImage { Url = store.ImageUrl} },
                         Buttons = new List<CardAction> { new CardAction { Title = "Select", Type = ActionTypes.PostBack, Value = $"__store_select_{JsonConvert.SerializeObject(store)}" } }
                     }.ToAttachment());
@@ -102,9 +101,12 @@ namespace Zoie.Bot.Dialogs.Main
             {
                 if (activity.Text.StartsWith("__store_select"))
                 {
-                    Store store = JsonConvert.DeserializeObject<Store>(activity.Text.Remove(0, "__store_select_".Length));
-                    context.ConversationData.SetValue("StoreSelected", store);
-
+                    string storeJson = activity.Text.Remove(0, "__store_select".Length);
+                    if (!string.IsNullOrWhiteSpace(storeJson))
+                    {
+                        Store store = JsonConvert.DeserializeObject<Store>(storeJson.Remove(0, 1));
+                        context.ConversationData.SetValue("StoreSelected", store);
+                    }
                     await this.ShowFunctionsForStoreAsync(context, result);
                 }
                 else if (activity.Text == "__store_show_more")
@@ -144,7 +146,6 @@ namespace Zoie.Bot.Dialogs.Main
                     new FacebookGenericTemplateContent()
                     {
                         Title = GeneralHelper.CapitalizeFirstLetter(store.Name),
-                        Subtitle = store.Link,
                         ImageUrl = store.ImageUrl
                     },
                     new FacebookGenericTemplateContent()
@@ -158,14 +159,14 @@ namespace Zoie.Bot.Dialogs.Main
                     {
                         Title = "Customer Service",
                         Subtitle = $"Do you want to learn more about {store.Name}?",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-help.jpeg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-info.jpg",
                         Buttons = new[] { new FacebookPostbackButton(title: "More Info", payload: "__store_info") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Window Shopping",
                         Subtitle = $"View all the collections created by {store.Name}!",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-window.jpg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-window.jpeg",
                         Buttons = new[] { new FacebookPostbackButton(title: "View Collections", payload: "__store_window") }
                     }
                 };
@@ -234,33 +235,87 @@ namespace Zoie.Bot.Dialogs.Main
             switch (activity.Text)
             {
                 case "__store_shop":
-                    break;
+                    if (context.UserData.ContainsKey("HasPersonalized") && context.UserData.GetValue<bool>("HasPersonalized"))
+                        await this.SelectShopCategoryAsync(context, result);
+                    else
+                        await context.Forward(new PersonalizationDialog(), SelectShopCategoryAsync, activity);
+                    return;
                 case "__store_info":
-                    await this.SelectCustomerServiceTypeAsync(context, result);
+                    await this.ShowCustomerServiceAsync(context, result);
                     return;
                 case "__store_window":
-                    break;
+                    await this.WindowShopAsync(context, result);
+                    return;
                 case "__store_reselect":
-                    context.ConversationData.RemoveValue("StoreSelected");
+                    context.ConversationData.Clear();
+                    context.ConversationData.RemoveValue("StoresNextPage");
                     await this.SelectStoreAsync(context, result);
                     return;
                 case "__menu_new_search":
                     context.ConversationData.RemoveValue("StoreSelected");
                     await this.EndAsync(context, result);
                     return;
+                case "__personality_answer":
+                    await this.ShowFunctionsForStoreAsync(context, result);
+                    return;
                 default:
-                    break;
+                    await context.Forward(new GlobalLuisDialog<object>(), AfterShowFunctionsForStoreAsync, activity);
+                    return;
             }
-            
+        }
+
+        private async Task SelectShopCategoryAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
+
+            reply.Text = "Let’s get this shopping started! What are you looking for?";
+            reply.SuggestedActions = new SuggestedActions()
+            {
+                Actions = new List<CardAction>()
+                {
+                    new CardAction(){ Title = "T-shirts", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "t-shirt" })}" },
+                    new CardAction(){ Title = "Trousers", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "παντελόνι" })}" },
+                    new CardAction(){ Title = "Dresses", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "φόρεμα" })}" },
+                    new CardAction(){ Title = "Jeans", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "τζιν" })}" },
+                }
+            };
+
+            await context.PostAsync(reply);
+            context.Wait(ShopCategorySelectedAsync);
+        }
+
+        private async Task ShopCategorySelectedAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
+
+            if (activity.Text.StartsWith("__shop_"))
+            {
+                string gender = context.UserData.GetValue<string>("Gender");
+
+                SearchModel searchModel = JsonConvert.DeserializeObject<SearchModel>(activity.Text.Remove(0, "__shop_".Length));
+                searchModel.Gender = gender == "Male" ? "άνδρας" : "γυναίκα";
+                context.ConversationData.SetValue("SearchModel", searchModel);
+
+                var searchApparelsApi = new API<ApparelsRoot>();
+                var apparelsRoot = await searchApparelsApi.CallAsync(searchModel.GetAttributesDictionary());                
+            }
+            else
+            {
+                //LUIS that returns SearchModel in Json format
+            }
+
             await this.UnimplementedAsync(context, result);
         }
 
-        private async Task ShopAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ShowSearchResultsAsync(IDialogContext context, IAwaitable<object> result)
         {
-
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
         }
 
-        private async Task SelectCustomerServiceTypeAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ShowCustomerServiceAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
@@ -278,35 +333,37 @@ namespace Zoie.Bot.Dialogs.Main
                     {
                         Title = "Brands",
                         Subtitle = $"View all the available brands in {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-brands0.jpg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-brands.jpeg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=1", title: "Brands") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "About",
                         Subtitle = $"Learn more about {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-about0.jpg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-about.jpeg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=2", title: "About") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Returns Policy",
                         Subtitle = $"Learn everything you want to know about returns in {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-returns0.jpg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-returns.jpeg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=3", title: "Returns") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Shipping",
                         Subtitle = $"View the available shipping ways, days to deliver and more about {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-shipping0.jpg",
+                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-shipping.jpeg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=4", title: "Shipping") }
                     }
                 };
                 for (int i = 0; i < 4; i++)
                     customerServiceContents[i].Tap = new FacebookDefaultAction((customerServiceContents[i].Buttons.First() as FacebookUrlButton).Url);
 
-                reply.ChannelData = ChannelsHelper.Facebook.Templates.CreateListTemplate(customerServiceContents, null, "compact");
+                var bottomButton = new FacebookPostbackButton(title: "Contact", payload: "__cs_contact");
+
+                reply.ChannelData = ChannelsHelper.Facebook.Templates.CreateListTemplate(customerServiceContents, bottomButton);
                 reply.Text = null;
             }
             else
@@ -321,17 +378,228 @@ namespace Zoie.Bot.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "Back", Type = ActionTypes.PostBack, Value = $"__store_select_{JsonConvert.SerializeObject(store)}" }
+                    new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
+                    new CardAction(){ Title = "Shop", Type = ActionTypes.PostBack, Value = "__store_shop" }
                 }
             };
             await context.PostAsync(reply);
 
-            context.Wait(StoreSelectedAsync);
+            context.Wait(AfterCustomerServiceAsync);
+        }
+
+        private async Task AfterCustomerServiceAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply("Contact us at info@zoie.io and a represenative will contact you.");
+
+            if (activity.Text == "__cs_contact")
+            {
+                reply.SuggestedActions = new SuggestedActions()
+                {
+                    Actions = new List<CardAction>()
+                    {
+                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
+                        new CardAction(){ Title = "Shop", Type = ActionTypes.PostBack, Value = "__store_shop" }
+                    }
+                };
+                await context.PostAsync(reply);
+                context.Wait(AfterCustomerServiceAsync);
+            }
+            else if (activity.Text.StartsWith("__store_shop"))
+            {
+                context.ConversationData.RemoveValue("WindowShopNextPage");
+                await this.AfterShowFunctionsForStoreAsync(context, result);
+            }
+            else if (activity.Text.StartsWith("__view_collection"))
+            {
+                await this.ShowApparelsForCollectionAsync(context, result);
+            }
+            else if (activity.Text == "__more_collections")
+                await this.WindowShopAsync(context, result);
+            else if (activity.Text == "__store_select")
+                await this.StoreSelectedAsync(context, result);
+            else
+                await this.AfterShowFunctionsForStoreAsync(context, result);
+
+            return;
         }
 
         private async Task WindowShopAsync(IDialogContext context, IAwaitable<object> result)
         {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
 
+            Store store = context.ConversationData.GetValue<Store>("StoreSelected");
+            string gender = context.UserData.GetValue<string>("Gender");
+            context.ConversationData.TryGetValue("WindowShopNextPage", out int currentPage);
+
+            var collectionsApi = new API<CollectionsRoot>();
+            var collectionsRoot = await collectionsApi.CallAsync(new Dictionary<string, string>(2)
+            {
+                { "page", currentPage.ToString() },
+                { "gender", (gender == "Female") ? "0" : "1" },
+                { "created_by", store.Id.ToString() }
+            });
+
+            if (collectionsRoot == null)
+            {
+                reply.Text = $"Sorry, no collections found for {store.Name.ToLower()} :/";
+                reply.SuggestedActions = new SuggestedActions()
+                {
+                    Actions = new List<CardAction>()
+                    {
+                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
+                        new CardAction(){ Title = "Shop", Type = ActionTypes.PostBack, Value = "__store_shop" }
+                    }
+                };
+                await context.PostAsync(reply);
+                context.Wait(AfterCustomerServiceAsync);
+                return;
+            }
+
+            if (collectionsRoot.RemainingPages > 0)
+                context.ConversationData.SetValue("WindowShopNextPage", currentPage + 1);
+            else
+                context.ConversationData.RemoveValue("WindowShopNextPage");
+
+
+            if (activity.ChannelId == "facebook")
+            {
+                var contentsForCurrentPage = new List<FacebookGenericTemplateContent>(4)
+                {
+                    new FacebookGenericTemplateContent()
+                    {
+                        Title = GeneralHelper.CapitalizeFirstLetter(store.Name) + " window shopping - " + ((gender == "Male") ? "Men" : "Women"),
+                        Subtitle = $"Fashion suggestions by {store.Name.ToLower()} - Page {currentPage + 1}",
+                        ImageUrl = store.ImageUrl
+                    }
+                };
+
+                Collection collection;
+                for (int i = 0; i < 3 && i < collectionsRoot.Collections.Count; i++)
+                {
+                    collection = collectionsRoot.Collections[i];
+                    contentsForCurrentPage.Add(
+                        new FacebookGenericTemplateContent()
+                        {
+                            Title = GeneralHelper.CapitalizeFirstLetter(collection.Title),
+                            Subtitle = $"By {store.Name}",
+                            Buttons = new[] { new FacebookPostbackButton(title: "View items", payload: $"__view_collection_{collection.Id}") },
+                            ImageUrl = collection.ImageUrl ??
+                                $"https://zoiebot.azurewebsites.net/Files/Images/Occasions/Outdoor/{gender}/{i + 1}.jpg"
+                        });
+                }
+
+                FacebookPostbackButton bottomPageButton = null;
+                if (!(currentPage == 0 && collectionsRoot.RemainingPages == 0))
+                    bottomPageButton = new FacebookPostbackButton(title: collectionsRoot.RemainingPages > 0 ? "Next page" : "First page", payload: "__more_collections");
+
+                reply.ChannelData = ChannelsHelper.Facebook.Templates.CreateListTemplate(contentsForCurrentPage.ToArray(), bottomPageButton);
+            }
+            else
+            {
+                reply.AttachmentLayout = AttachmentLayoutTypes.List;
+
+                context.Wait(UnimplementedAsync);
+                return;
+            }
+
+
+            reply.SuggestedActions = new SuggestedActions()
+            {
+                Actions = new List<CardAction>()
+                {
+                    new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
+                    new CardAction(){ Title = "New search", Type = ActionTypes.PostBack, Value = "__menu_new_search" }
+                }
+            };
+
+            await context.PostAsync(reply);
+            context.Wait(AfterCustomerServiceAsync);
+        }
+
+        private async Task ShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
+
+            string gender = context.UserData.GetValue<string>("Gender");
+            string collectionId = activity.Text.Remove(0, "__view_collection_".Length);
+
+            var collectionApparelsApi = new API<CollectionApparelsRoot>();
+            var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
+
+            reply.Text = "Here you are!";
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            foreach (var apparel in collectionApparelsRoot.Items)
+            {
+                reply.Attachments.Add(
+                    new HeroCard()
+                    {
+                        Title = GeneralHelper.CapitalizeFirstLetter(apparel.Name),
+                        Subtitle = apparel.PriceString + "€",
+                        Images = new List<CardImage> { new CardImage { Url = apparel.ImageUrl } },
+                        Buttons = new List<CardAction> { new CardAction { Title = "Buy", Type = ActionTypes.OpenUrl, Value = apparel.Link } },
+                        Tap = new CardAction { Type = ActionTypes.OpenUrl, Value = apparel.Link }
+                    }.ToAttachment());
+            }
+
+            reply.Attachments.Add(
+                new HeroCard()
+                {
+                    Title = "Collection rate",
+                    Subtitle = "Did you like that set?",
+                    Images = new List<CardImage> { new CardImage { Url = "http://zoie.io/images/Brand-icon.png" } },
+                    Buttons = new List<CardAction>
+                    {
+                        new CardAction { Title = "😍 Very much", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_3"},
+                        new CardAction { Title = "😐 So and so", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_2"},
+                        new CardAction { Title = "😒 Not at all", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_1"},
+                    }
+                }.ToAttachment());
+
+            reply.SuggestedActions = new SuggestedActions()
+            {
+                Actions = new List<CardAction>()
+                {
+                    new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
+                    new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" }
+                }
+            };
+
+            await context.PostAsync(reply);
+
+            context.Wait(AfterShowApparelsForCollectionAsync);
+        }
+
+        private async Task AfterShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply();
+
+            if (activity.Text.StartsWith("__feedback_rate"))
+            {
+                string[] feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                int collectionId = int.Parse(feedbackData[0]);
+                int rate = int.Parse(feedbackData[1]);
+                //TODO: Store rate for collection
+
+                reply.Text = "Thank your for your feedback!";
+                reply.SuggestedActions = new SuggestedActions()
+                {
+                    Actions = new List<CardAction>()
+                    {
+                        new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
+                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" }
+                    }
+                };
+                await context.PostAsync(reply);
+                context.Wait(AfterCustomerServiceAsync);
+            }
+            else
+            {
+                await this.AfterCustomerServiceAsync(context, result);
+            }
         }
 
         private async Task UnimplementedAsync(IDialogContext context, IAwaitable<object> result)
