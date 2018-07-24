@@ -62,7 +62,7 @@ namespace Zoie.Bot.Dialogs.Main
                 {
                     new CardAction(){ Title = "Occasion ✨", Type = ActionTypes.PostBack, Value = "__function_occasion" },
                     //new CardAction(){ Title = "Gift 🎁", Type = ActionTypes.PostBack, Value = "__function_gift" },
-                    new CardAction(){ Title = "Stores 🏬", Type = ActionTypes.PostBack, Value = "__function_fitting-room" }
+                    new CardAction(){ Title = "Stores 🏬", Type = ActionTypes.PostBack, Value = "__function_store" }
                 }
             };
             await context.PostAsync(reply);
@@ -82,8 +82,8 @@ namespace Zoie.Bot.Dialogs.Main
                     activity.Text = "__function_occasion";
                 else if (message.Contains("gift"))
                     activity.Text = "__function_gift";
-                else if (message.Contains("fitting") || message.Contains("store"))
-                    activity.Text = "__function_fitting-room";
+                else if (message.Contains("store"))
+                    activity.Text = "__function_store";
             }
 
             switch (activity.Text)
@@ -94,7 +94,7 @@ namespace Zoie.Bot.Dialogs.Main
                 case "__function_gift":
                     await context.Forward(new GiftDialog(), SelectFunctionAsync, activity);
                     return;
-                case "__function_fitting-room":
+                case "__function_store":
                     await context.Forward(new StoreDialog(), SelectFunctionAsync, activity);
                     return;
                 default:

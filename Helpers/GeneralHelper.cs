@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace Zoie.Helpers
 {
@@ -33,5 +34,7 @@ namespace Zoie.Helpers
         {
             return Encoding.ASCII.GetString( Convert.FromBase64String( HttpUtility.UrlDecode(str) ) );
         }
+
+        public static string GetActualAsyncMethodName([CallerMemberName] string name = null) => name;
     }
 }

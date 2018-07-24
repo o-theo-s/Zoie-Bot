@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Apis;
 using Apis.Models;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Zoie.Bot.Dialogs.LUIS;
-using Zoie.Bot.Models;
 using Zoie.Helpers;
-using Zoie.Helpers.Channels.Facebook;
 using Zoie.Helpers.Channels.Facebook.Library;
 using Zoie.Resources.DialogReplies;
-using static Zoie.Bot.Dialogs.Main.PersonalizationDialog;
 
 namespace Zoie.Bot.Dialogs.Main
 {
@@ -31,73 +29,89 @@ namespace Zoie.Bot.Dialogs.Main
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply(DialogsHelper.GetResourceValue<OccasionReplies>("OccasionSelect", activity));
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             reply.SuggestedActions = new SuggestedActions() { Actions = await DialogsHelper.GetOccasionSuggestedActionsAsync() };
             await context.PostAsync(reply);
 
-            context.Wait(OccasionSelectedAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task OccasionSelectedAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
 
-            if (activity.Text.StartsWith("__occasion"))
+            switch (activity.Text)
             {
-                Occasion occasion = JsonConvert.DeserializeObject<Occasion>(activity.Text.Remove(0, "__occasion_".Length));
-                context.ConversationData.SetValue("OccasionSelected", occasion);
+                case string text when text.StartsWith("__occasion"):
+                    Occasion occasion = JsonConvert.DeserializeObject<Occasion>(activity.Text.Remove(0, "__occasion_".Length));
+                    context.PrivateConversationData.SetValue("OccasionSelected", occasion);
 
-                string resourceName = GeneralHelper.CapitalizeFirstLetter(occasion.Name);
-                bool occasionOK = DialogsHelper.TryGetResourceValue<OccasionReplies>(resourceName, out string occasionPhrase, activity);
+                    string resourceName = GeneralHelper.CapitalizeFirstLetter(occasion.Name);
+                    string occasionPhrase = DialogsHelper.GetResourceValue<OccasionReplies>(resourceName, activity);
 
-                if (occasionOK)
-                {
                     reply.Text = occasionPhrase;
                     await context.PostAsync(reply);
 
                     if (context.UserData.ContainsKey("HasPersonalized") && context.UserData.GetValue<bool>("HasPersonalized"))
-                        await this.ShowCollectionsForOccasionAsync(context, result);
+                        await this.CollectionsForOccasionAsync(context, result);
                     else
-                        await context.Forward(new PersonalizationDialog(), ShowCollectionsForOccasionAsync, activity);
-                }
-                else
-                {
-                    reply.Text = OccasionReplies.UnknownOccasion;
-                    await context.PostAsync(reply);
-
+                        await context.Forward(new PersonalizationDialog(), CollectionsForOccasionAsync, activity);
+                    return;
+                case string text when text.StartsWith("__view_collection"):
+                    await this.ApparelsForCollectionAsync(context, result);
+                    return;
+                case "__more_collections":
+                    await this.CollectionsForOccasionAsync(context, result);
+                    return;
+                case "__reselect_occasion":
+                    context.ConversationData.Clear();
                     await this.SelectOccasionAsync(context, result);
-                }
-            }
-            else if (activity.Text == "__personality_answer")
-            {
-                await this.SelectOccasionAsync(context, result);
-            }
-            else
-            {
-                await context.Forward(new OccasionLuisDialog(), OccasionSelectedAsync, activity);
-            }
+                    return;
+                case string text when text.StartsWith("__feedback_rate"):
+                    await this.FeedbackRateAsync(context, result);
+                    return;
+                case "__menu_new_search":
+                    context.ConversationData.Clear();
+                    context.PrivateConversationData.Clear();
+                    await this.EndAsync(context, result);
+                    return;
+                case "__personality_answer":
+                    var lastSubdialog = context.PrivateConversationData.GetValue<string>("LastOccasionSubdialog");
+                    MethodInfo reshowLastSubdialog = this.GetType().GetMethod(lastSubdialog, BindingFlags.NonPublic | BindingFlags.Instance);
 
-            return;
+                    if (context.ConversationData.TryGetValue("CollectionsNextPage", out int currentPage))
+                        context.ConversationData.SetValue("CollectionsNextPage", currentPage - 1);
+
+                    await (Task) reshowLastSubdialog.Invoke(this, new object[] { context, result });
+                    return;
+                default:
+                    await context.Forward(new OccasionLuisDialog(), MessageReceivedAsync, activity);
+                    return;
+            }
         }
 
-        private async Task ShowCollectionsForOccasionAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task CollectionsForOccasionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            Occasion occasion = context.ConversationData.GetValue<Occasion>("OccasionSelected");
+            Occasion occasion = context.PrivateConversationData.GetValue<Occasion>("OccasionSelected");
             string gender = context.UserData.GetValue<string>("Gender");
             context.ConversationData.TryGetValue("CollectionsNextPage", out int currentPage);
+            context.ConversationData.SetValue("CollectionsNextPage", currentPage + 1);
 
             var collectionsApi = new API<CollectionsRoot>();
-            var collectionsRoot = await collectionsApi.CallAsync(
-                new Dictionary<string, string>(2)
-                {
-                    { "occasion_id", occasion.Id },
-                    { "page", currentPage.ToString() },
-                    { "gender", gender == "Female" ? "0" : "1" }
-                });
+            var apiParams = new Dictionary<string, string>(3)
+            {
+                { "occasion_id", occasion.Id },
+                { "page", currentPage.ToString() },
+                { "gender", gender == "Female" ? "0" : "1" }
+            };
+            var collectionsRoot = await collectionsApi.CallAsync(apiParams)
+                ?? await collectionsApi.CallAsync(apiParams.ToDictionary(kvp => kvp.Key, kvp => kvp.Key == "page" ? (currentPage = 0).ToString() : kvp.Value));
 
             if (collectionsRoot == null)
             {
@@ -111,15 +125,9 @@ namespace Zoie.Bot.Dialogs.Main
                     }
                 };
                 await context.PostAsync(reply);
-                context.Wait(AfterShowCollectionsForOccasionAsync);
+                context.Wait(MessageReceivedAsync);
                 return;
             }
-
-            if (collectionsRoot.RemainingPages > 0)
-                context.ConversationData.SetValue("CollectionsNextPage", currentPage + 1);
-            else
-                context.ConversationData.RemoveValue("CollectionsNextPage");
-
 
             if (activity.ChannelId == "facebook")
             {
@@ -134,7 +142,6 @@ namespace Zoie.Bot.Dialogs.Main
                 };
 
                 Collection collection;
-                //Random randImgSelector = new Random();
                 for (int i = 0; i < 3 && i < collectionsRoot.Collections.Count; i++)
                 {
                     collection = collectionsRoot.Collections[i];
@@ -174,58 +181,23 @@ namespace Zoie.Bot.Dialogs.Main
             };
 
             await context.PostAsync(reply);
-            context.Wait(AfterShowCollectionsForOccasionAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task AfterShowCollectionsForOccasionAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            var activity = await result as Activity;
-
-            if (activity.Text.StartsWith("__"))
-            {
-                if (activity.Text.StartsWith("__view_collection"))
-                {
-                    await this.ShowApparelsForCollectionAsync(context, result);
-                }
-                else if (activity.Text.StartsWith("__more_collections"))
-                {
-                    await this.ShowCollectionsForOccasionAsync(context, result);
-                }
-                else if (activity.Text.Equals("__reselect_occasion"))
-                {
-                    context.ConversationData.RemoveValue("CollectionsNextPage");
-                    await this.SelectOccasionAsync(context, result);
-                }
-                //TODO: Remove else if - It will work from persistent menu
-                else if (activity.Text == "__menu_new_search")
-                {
-                    await this.EndAsync(context, result);
-                }
-            }
-            else
-            {
-                await context.Forward(new GlobalLuisDialog<object>(), ShowCollectionsForOccasionAsync, activity);
-            }
-        }
-
-        private async Task ShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             string gender = context.UserData.GetValue<string>("Gender");
-            string collectionId = activity.Text.Remove(0, "__view_collection_".Length);
-
-            /*CloudTable occasionSetsTable = TablesHelper.GetTableReference(TablesHelper.TableNames.OccasionSets);
-            TableQuery<CollectionApparel> rangeQuery = new TableQuery<CollectionApparel>().Where(
-                TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, occasionType + "__" + gender.ToLower()),
-                    TableOperators.And,
-                    TableQuery.CombineFilters(
-                        TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, collectionId.ToString()),
-                        TableOperators.And,
-                        TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThan, (collectionId + 1).ToString()))));
-            var apparels = occasionSetsTable.ExecuteQuery(rangeQuery);*/
+            string collectionId = null;
+            if (activity.Text.StartsWith("__view_collection_"))
+                collectionId = activity.Text.Remove(0, "__view_collection_".Length);
+            if (!string.IsNullOrWhiteSpace(collectionId))
+                context.PrivateConversationData.SetValue("LastOccasionCollectionViewed", collectionId);
+            else if (!context.PrivateConversationData.TryGetValue("LastOccasionCollectionViewed", out collectionId))
+                await this.CollectionsForOccasionAsync(context, result);
 
             var collectionApparelsApi = new API<CollectionApparelsRoot>();
             var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
@@ -271,37 +243,38 @@ namespace Zoie.Bot.Dialogs.Main
 
             await context.PostAsync(reply);
 
-            context.Wait(AfterShowApparelsForCollectionAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task AfterShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task FeedbackRateAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply();
+            var reply = activity.CreateReply("Thank your for your feedback!");
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            if (activity.Text.StartsWith("__feedback_rate"))
+            string[] feedbackData = null;
+            if (activity.Text.StartsWith("__feedback_rate_"))
+                feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (feedbackData != null)
             {
-                string[] feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
                 int collectionId = int.Parse(feedbackData[0]);
                 int rate = int.Parse(feedbackData[1]);
-                //TODO: Store rate for collection
 
-                reply.Text = "Thank your for your feedback!";
-                reply.SuggestedActions = new SuggestedActions()
-                {
-                    Actions = new List<CardAction>()
-                    {
-                        new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
-                        new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
-                    }
-                };
-                await context.PostAsync(reply);
-                context.Wait(AfterShowCollectionsForOccasionAsync);
+                //TODO: Store rate for collection
             }
-            else
+
+            reply.SuggestedActions = new SuggestedActions()
             {
-                await this.AfterShowCollectionsForOccasionAsync(context, result);
-            }
+                Actions = new List<CardAction>()
+                {
+                    new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
+                    new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                }
+            };
+            await context.PostAsync(reply);
+
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task UnimplementedAsync(IDialogContext context, IAwaitable<object> result)

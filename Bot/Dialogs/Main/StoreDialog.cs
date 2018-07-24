@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Apis;
 using Apis.Models;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Zoie.Bot.Dialogs.LUIS;
 using Zoie.Bot.Models;
 using Zoie.Helpers;
@@ -34,25 +34,24 @@ namespace Zoie.Bot.Dialogs.Main
             Referral referral = context.PrivateConversationData.GetValue<Referral>("Referral");
             context.PrivateConversationData.RemoveValue("Referral");
 
-            context.ConversationData.SetValue("StoreSelected", JsonConvert.DeserializeObject<Store>(referral.Item));
-            await this.ShowFunctionsForStoreAsync(context, result);
+            context.PrivateConversationData.SetValue("StoreSelected", JsonConvert.DeserializeObject<Store>(referral.Item));
+            await this.ShowStoreMenuAsync(context, result);
         }
 
         private async Task SelectStoreAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply("Let’s pick a store and buy an outfit for today!");
-            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             context.ConversationData.TryGetValue("StoresNextPage", out int currentPage);
 
             var storesApi = new API<StoresRoot>();
-            var storesRoot = await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", currentPage.ToString() } });
-            if (storesRoot.RemainingPages > 0)
-                context.ConversationData.SetValue("StoresNextPage", currentPage + 1);
-            else
-                context.ConversationData.RemoveValue("StoresNextPage");
+            var storesRoot = await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", currentPage.ToString() } })
+                ?? await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", (currentPage = 0).ToString() } });
+            context.ConversationData.SetValue("StoresNextPage", currentPage + 1);
 
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
             Store store;
             for (int i = 0; i < 9 && i < storesRoot.Stores.Count; i++)
             {
@@ -89,55 +88,97 @@ namespace Zoie.Bot.Dialogs.Main
 
             await context.PostAsync(reply);
 
-            context.Wait(StoreSelectedAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task StoreSelectedAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply();
 
-            if (activity.Text.StartsWith("__store"))
+            switch (activity.Text)
             {
-                if (activity.Text.StartsWith("__store_select"))
-                {
+                case string text when text.StartsWith("__store_select"):
                     string storeJson = activity.Text.Remove(0, "__store_select".Length);
                     if (!string.IsNullOrWhiteSpace(storeJson))
                     {
                         Store store = JsonConvert.DeserializeObject<Store>(storeJson.Remove(0, 1));
-                        context.ConversationData.SetValue("StoreSelected", store);
+                        context.PrivateConversationData.SetValue("StoreSelected", store);
                     }
-                    await this.ShowFunctionsForStoreAsync(context, result);
-                }
-                else if (activity.Text == "__store_show_more")
-                {
+                    await this.ShowStoreMenuAsync(context, result);
+                    return;
+                case "__store_show_more":
                     await this.SelectStoreAsync(context, result);
-                }
-            }
-            //TODO: Remove else if - It will work from persistent menu
-            else if (activity.Text == "__menu_new_search")
-            {
-                await context.PostAsync("Alright!");
-                await this.EndAsync(context, result);
-            }
-            else if (activity.Text == "__personality_answer")
-            {
-                await this.SelectStoreAsync(context, result);
-            }
-            else
-            {
-                await context.Forward(new GlobalLuisDialog<object>(), StoreSelectedAsync, activity);
-            }
+                    return;
+                case "__store_shop":
+                    context.ConversationData.RemoveValue("WindowShopNextPage");
+                    if (context.UserData.ContainsKey("HasPersonalized") && context.UserData.GetValue<bool>("HasPersonalized"))
+                        await this.SelectShopCategoryAsync(context, result);
+                    else
+                        await context.Forward(new PersonalizationDialog(), SelectShopCategoryAsync, activity);
+                    return;
+                case "__store_info":
+                    await this.CustomerServiceAsync(context, result);
+                    return;
+                case "__store_window":
+                    await this.WindowShopAsync(context, result);
+                    return;
+                case "__store_reselect":
+                    context.ConversationData.Clear();
+                    await this.SelectStoreAsync(context, result);
+                    return;
+                case string text when text.StartsWith("__shop_"):
+                    string gender = context.UserData.GetValue<string>("Gender");
 
-            return;
+                    SearchModel searchModel = JsonConvert.DeserializeObject<SearchModel>(activity.Text.Remove(0, "__shop_".Length));
+                    searchModel.Gender = gender == "Male" ? "άνδρας" : "γυναίκα";
+                    context.ConversationData.SetValue("SearchModel", searchModel);
+
+                    var searchApparelsApi = new API<ApparelsRoot>();
+                    var apparelsRoot = await searchApparelsApi.CallAsync(searchModel.GetAttributesDictionary());
+
+                    await this.UnimplementedAsync(context, result);
+                    return;
+                case "__cs_contact":
+                    await this.ContactAsync(context, result);
+                    return;
+                case string text when text.StartsWith("__view_collection"):
+                    await this.ApparelsForCollectionAsync(context, result);
+                    return;
+                case "__more_collections":
+                    await this.WindowShopAsync(context, result);
+                    return;
+                case string text when text.StartsWith("__feedback_rate"):
+                    await this.FeedbackRateAsync(context, result);
+                    return;
+                case "__menu_new_search":
+                    context.ConversationData.Clear();
+                    context.PrivateConversationData.Clear();
+                    await this.EndAsync(context, result);
+                    return;
+                case "__personality_answer":
+                    var lastSubdialog = context.PrivateConversationData.GetValue<string>("LastStoreSubdialog");
+                    MethodInfo reshowLastSubdialog = this.GetType().GetMethod(lastSubdialog, BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    if (context.ConversationData.TryGetValue("StoresNextPage", out int currentPage))
+                        context.ConversationData.SetValue("StoresNextPage", currentPage - 1);
+                    if (context.ConversationData.TryGetValue("WindowShopNextPage", out currentPage))
+                        context.ConversationData.SetValue("WindowShopNextPage", currentPage - 1);
+
+                    await (Task) reshowLastSubdialog.Invoke(this, new object[] { context, result });
+                    return;
+                default:
+                    await context.Forward(new GlobalLuisDialog<object>(), MessageReceivedAsync, activity);
+                    return;
+            }
         }
 
-        private async Task ShowFunctionsForStoreAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ShowStoreMenuAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            Store store = context.ConversationData.GetValue<Store>("StoreSelected");
+            Store store = context.PrivateConversationData.GetValue<Store>("StoreSelected");
 
             if (activity.ChannelId == "facebook")
             {
@@ -225,49 +266,14 @@ namespace Zoie.Bot.Dialogs.Main
             };
             await context.PostAsync(reply);
 
-            context.Wait(AfterShowFunctionsForStoreAsync);
-        }
-
-        private async Task AfterShowFunctionsForStoreAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            var activity = await result as Activity;
-
-            switch (activity.Text)
-            {
-                case "__store_shop":
-                    if (context.UserData.ContainsKey("HasPersonalized") && context.UserData.GetValue<bool>("HasPersonalized"))
-                        await this.SelectShopCategoryAsync(context, result);
-                    else
-                        await context.Forward(new PersonalizationDialog(), SelectShopCategoryAsync, activity);
-                    return;
-                case "__store_info":
-                    await this.ShowCustomerServiceAsync(context, result);
-                    return;
-                case "__store_window":
-                    await this.WindowShopAsync(context, result);
-                    return;
-                case "__store_reselect":
-                    context.ConversationData.Clear();
-                    context.ConversationData.RemoveValue("StoresNextPage");
-                    await this.SelectStoreAsync(context, result);
-                    return;
-                case "__menu_new_search":
-                    context.ConversationData.RemoveValue("StoreSelected");
-                    await this.EndAsync(context, result);
-                    return;
-                case "__personality_answer":
-                    await this.ShowFunctionsForStoreAsync(context, result);
-                    return;
-                default:
-                    await context.Forward(new GlobalLuisDialog<object>(), AfterShowFunctionsForStoreAsync, activity);
-                    return;
-            }
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task SelectShopCategoryAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             reply.Text = "Let’s get this shopping started! What are you looking for?";
             reply.SuggestedActions = new SuggestedActions()
@@ -280,33 +286,9 @@ namespace Zoie.Bot.Dialogs.Main
                     new CardAction(){ Title = "Jeans", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "τζιν" })}" },
                 }
             };
-
             await context.PostAsync(reply);
-            context.Wait(ShopCategorySelectedAsync);
-        }
 
-        private async Task ShopCategorySelectedAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            var activity = await result as Activity;
-            var reply = activity.CreateReply();
-
-            if (activity.Text.StartsWith("__shop_"))
-            {
-                string gender = context.UserData.GetValue<string>("Gender");
-
-                SearchModel searchModel = JsonConvert.DeserializeObject<SearchModel>(activity.Text.Remove(0, "__shop_".Length));
-                searchModel.Gender = gender == "Male" ? "άνδρας" : "γυναίκα";
-                context.ConversationData.SetValue("SearchModel", searchModel);
-
-                var searchApparelsApi = new API<ApparelsRoot>();
-                var apparelsRoot = await searchApparelsApi.CallAsync(searchModel.GetAttributesDictionary());                
-            }
-            else
-            {
-                //LUIS that returns SearchModel in Json format
-            }
-
-            await this.UnimplementedAsync(context, result);
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task ShowSearchResultsAsync(IDialogContext context, IAwaitable<object> result)
@@ -315,12 +297,13 @@ namespace Zoie.Bot.Dialogs.Main
             var reply = activity.CreateReply();
         }
 
-        private async Task ShowCustomerServiceAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task CustomerServiceAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            Store store = context.ConversationData.GetValue<Store>("StoreSelected");
+            Store store = context.PrivateConversationData.GetValue<Store>("StoreSelected");
 
             reply.Text = $"Customer service for {store.Name} store:";
             await context.PostAsync(reply);
@@ -384,62 +367,29 @@ namespace Zoie.Bot.Dialogs.Main
             };
             await context.PostAsync(reply);
 
-            context.Wait(AfterCustomerServiceAsync);
-        }
-
-        private async Task AfterCustomerServiceAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            var activity = await result as Activity;
-            var reply = activity.CreateReply("Contact us at info@zoie.io and a represenative will contact you.");
-
-            if (activity.Text == "__cs_contact")
-            {
-                reply.SuggestedActions = new SuggestedActions()
-                {
-                    Actions = new List<CardAction>()
-                    {
-                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
-                        new CardAction(){ Title = "Shop", Type = ActionTypes.PostBack, Value = "__store_shop" }
-                    }
-                };
-                await context.PostAsync(reply);
-                context.Wait(AfterCustomerServiceAsync);
-            }
-            else if (activity.Text.StartsWith("__store_shop"))
-            {
-                context.ConversationData.RemoveValue("WindowShopNextPage");
-                await this.AfterShowFunctionsForStoreAsync(context, result);
-            }
-            else if (activity.Text.StartsWith("__view_collection"))
-            {
-                await this.ShowApparelsForCollectionAsync(context, result);
-            }
-            else if (activity.Text == "__more_collections")
-                await this.WindowShopAsync(context, result);
-            else if (activity.Text == "__store_select")
-                await this.StoreSelectedAsync(context, result);
-            else
-                await this.AfterShowFunctionsForStoreAsync(context, result);
-
-            return;
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task WindowShopAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            Store store = context.ConversationData.GetValue<Store>("StoreSelected");
+            Store store = context.PrivateConversationData.GetValue<Store>("StoreSelected");
             string gender = context.UserData.GetValue<string>("Gender");
             context.ConversationData.TryGetValue("WindowShopNextPage", out int currentPage);
 
             var collectionsApi = new API<CollectionsRoot>();
-            var collectionsRoot = await collectionsApi.CallAsync(new Dictionary<string, string>(2)
+            var apiParams = new Dictionary<string, string>(3)
             {
                 { "page", currentPage.ToString() },
                 { "gender", (gender == "Female") ? "0" : "1" },
                 { "created_by", store.Id.ToString() }
-            });
+            };
+            var collectionsRoot = await collectionsApi.CallAsync(apiParams)
+                ?? await collectionsApi.CallAsync(apiParams.ToDictionary(kvp => kvp.Key, kvp => (kvp.Key == "page") ? (currentPage = 0).ToString() : kvp.Value));
+            context.ConversationData.SetValue("WindowShopNextPage", currentPage + 1);
 
             if (collectionsRoot == null)
             {
@@ -453,15 +403,9 @@ namespace Zoie.Bot.Dialogs.Main
                     }
                 };
                 await context.PostAsync(reply);
-                context.Wait(AfterCustomerServiceAsync);
+                context.Wait(MessageReceivedAsync);
                 return;
             }
-
-            if (collectionsRoot.RemainingPages > 0)
-                context.ConversationData.SetValue("WindowShopNextPage", currentPage + 1);
-            else
-                context.ConversationData.RemoveValue("WindowShopNextPage");
-
 
             if (activity.ChannelId == "facebook")
             {
@@ -515,16 +459,23 @@ namespace Zoie.Bot.Dialogs.Main
             };
 
             await context.PostAsync(reply);
-            context.Wait(AfterCustomerServiceAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task ShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             string gender = context.UserData.GetValue<string>("Gender");
-            string collectionId = activity.Text.Remove(0, "__view_collection_".Length);
+            string collectionId = null;
+            if (activity.Text.StartsWith("__view_collection_"))
+                collectionId = activity.Text.Remove(0, "__view_collection_".Length);
+            if (!string.IsNullOrWhiteSpace(collectionId))
+                context.PrivateConversationData.SetValue("LastStoreCollectionViewed", collectionId);
+            else if (!context.PrivateConversationData.TryGetValue("LastStoreCollectionViewed", out collectionId))
+                await this.WindowShopAsync(context, result);
 
             var collectionApparelsApi = new API<CollectionApparelsRoot>();
             var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
@@ -569,37 +520,57 @@ namespace Zoie.Bot.Dialogs.Main
 
             await context.PostAsync(reply);
 
-            context.Wait(AfterShowApparelsForCollectionAsync);
+            context.Wait(MessageReceivedAsync);
         }
 
-        private async Task AfterShowApparelsForCollectionAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task ContactAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply();
+            var reply = activity.CreateReply("Contact us at info@zoie.io and a represenative will contact you.");
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
-            if (activity.Text.StartsWith("__feedback_rate"))
+            reply.SuggestedActions = new SuggestedActions()
             {
-                string[] feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                Actions = new List<CardAction>()
+                    {
+                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" },
+                        new CardAction(){ Title = "Shop", Type = ActionTypes.PostBack, Value = "__store_shop" }
+                    }
+            };
+            await context.PostAsync(reply);
+
+            context.Wait(MessageReceivedAsync);
+        }
+
+        private async Task FeedbackRateAsync(IDialogContext context, IAwaitable<object> result)
+        {
+            var activity = await result as Activity;
+            var reply = activity.CreateReply("Thank your for your feedback!");
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
+
+            string[] feedbackData = null;
+            if (activity.Text.StartsWith("__feedback_rate_"))
+                feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (feedbackData != null)
+            {
                 int collectionId = int.Parse(feedbackData[0]);
                 int rate = int.Parse(feedbackData[1]);
-                //TODO: Store rate for collection
 
-                reply.Text = "Thank your for your feedback!";
-                reply.SuggestedActions = new SuggestedActions()
-                {
-                    Actions = new List<CardAction>()
-                    {
-                        new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
-                        new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" }
-                    }
-                };
-                await context.PostAsync(reply);
-                context.Wait(AfterCustomerServiceAsync);
+                //TODO: Store rate for collection
             }
-            else
+
+            reply.SuggestedActions = new SuggestedActions()
             {
-                await this.AfterCustomerServiceAsync(context, result);
-            }
+                Actions = new List<CardAction>()
+                        {
+                            new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
+                            new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" }
+                        }
+            };
+            await context.PostAsync(reply);
+
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task UnimplementedAsync(IDialogContext context, IAwaitable<object> result)

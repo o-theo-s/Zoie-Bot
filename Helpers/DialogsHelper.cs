@@ -136,7 +136,7 @@ namespace Zoie.Helpers
                 suggestedActions.Add(
                     new CardAction()
                     {
-                        Title = occasion.Name + emoji,
+                        Title = occasion.Name + " " + emoji,
                         Type = ActionTypes.PostBack,
                         Value = $"__occasion_{JsonConvert.SerializeObject(occasion)}"
                     });

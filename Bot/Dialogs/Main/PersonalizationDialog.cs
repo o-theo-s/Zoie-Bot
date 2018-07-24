@@ -28,9 +28,8 @@ namespace Zoie.Bot.Dialogs.Main
             var reply = activity.CreateReply();
 
             PersonalizationSteps startStep = context.UserData.ContainsKey("Gender") ? PersonalizationSteps.Location : PersonalizationSteps.Gender;
-            Occasion occasion = context.ConversationData.GetValue<Occasion>("OccasionSelected");
 
-            reply.Text = $"Before I show you some of the best outfits for {occasion.Name}, it would be great to know you a little bit better! ☺";
+            reply.Text = $"Before I show you some of the best outfits, it would be great to know you a little bit better! ☺";
             await context.PostAsync(reply);
 
             context.ConversationData.SetValue("PersonalizationStep", startStep);
