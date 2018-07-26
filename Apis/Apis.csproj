@@ -7,7 +7,7 @@
     <ProjectGuid>{7135D5FE-4E56-4A89-801F-598B0D5B4D37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Apis</RootNamespace>
+    <RootNamespace>Zoie.Apis</RootNamespace>
     <AssemblyName>Apis</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

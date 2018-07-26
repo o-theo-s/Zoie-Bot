@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Apis.Models
+namespace Zoie.Apis.Models
 {
     public class Collection
     {

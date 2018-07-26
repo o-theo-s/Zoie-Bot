@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apis.Models
+namespace Zoie.Apis.Models
 {
     public class CollectionApparel
     {

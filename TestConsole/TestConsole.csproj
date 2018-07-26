@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{07759093-F630-473E-8AE8-8BE7AD32CE9E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestConsole</RootNamespace>
+    <RootNamespace>Zoie.TestConsole</RootNamespace>
     <AssemblyName>TestConsole</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

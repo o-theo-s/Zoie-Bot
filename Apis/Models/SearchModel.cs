@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Apis.Models
+namespace Zoie.Apis.Models
 {
     [Serializable]
     public class SearchModel

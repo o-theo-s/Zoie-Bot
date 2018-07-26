@@ -1,5 +1,5 @@
-﻿using Apis;
-using Apis.Models;
+﻿using Zoie.Apis;
+using Zoie.Apis.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestConsole
+namespace Zoie.TestConsole
 {
     class Program
     {

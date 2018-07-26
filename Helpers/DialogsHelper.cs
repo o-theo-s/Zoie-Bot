@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Text;
-using Apis;
-using Apis.Models;
+using Zoie.Apis;
+using Zoie.Apis.Models;
 using Zoie.Resources.DialogReplies;
 using Newtonsoft.Json;
 
@@ -17,7 +17,7 @@ namespace Zoie.Helpers
 {
     public static class DialogsHelper
     {
-        public static async Task ResetConversationAsync(IMessageActivity activity)
+        public static async Task ResetConversationAsync(IMessageActivity activity, bool deletePrivateConversationData = false)
         {
             using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, activity))
             {
@@ -28,6 +28,9 @@ namespace Zoie.Helpers
                 stack.Reset();
 
                 botData.ConversationData.Clear();
+                if (deletePrivateConversationData)
+                    botData.PrivateConversationData.Clear();
+
                 await botData.FlushAsync(new System.Threading.CancellationToken());
             }
         }
@@ -176,6 +179,15 @@ namespace Zoie.Helpers
             }
 
             return tore;
+        }
+
+        public static void EventToMessageActivity(ref Activity activity, ref IAwaitable<object> result)
+        {
+            if (activity.Type == "event" && activity.Value is Activity)
+            {
+                activity = activity.Value as Activity;
+                result = new AwaitableFromItem<object>(activity);
+            }
         }
     }
 }

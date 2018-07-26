@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot", "Bot\Bot.csproj", "{C4F925FF-7B24-44A1-98BA-98EB23E9B052}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petrichor", "Petrichor\Petrichor.csproj", "{C4F925FF-7B24-44A1-98BA-98EB23E9B052}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{AC8182F7-5754-4AE6-ABF3-522DF9C1D993}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apis", "Apis\Apis.csproj", "{7135D5FE-4E56-4A89-801F-598B0D5B4D37}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{07759093-F630-473E-8AE8-8BE7AD32CE9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ineffable", "Ineffable\Ineffable.csproj", "{894A4513-C01C-434C-ADA2-66795A5ACB39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{07759093-F630-473E-8AE8-8BE7AD32CE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07759093-F630-473E-8AE8-8BE7AD32CE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07759093-F630-473E-8AE8-8BE7AD32CE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
