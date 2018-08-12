@@ -183,7 +183,7 @@ namespace Zoie.Helpers
 
         public static void EventToMessageActivity(ref Activity activity, ref IAwaitable<object> result)
         {
-            if (activity.Type == "event" && activity.Value is Activity)
+            if (activity.GetActivityType() == ActivityTypes.Event && activity.Value is Activity)
             {
                 activity = activity.Value as Activity;
                 result = new AwaitableFromItem<object>(activity);

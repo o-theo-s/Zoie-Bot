@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using Zoie.Petrichor.Dialogs;
 using System;
 using System.Linq;
 using Zoie.Helpers;
 using Zoie.Petrichor.Dialogs.Main;
 using Zoie.Petrichor.Models;
-using Newtonsoft.Json;
+
+#pragma warning disable VSTHRD200
 
 namespace Zoie.Petrichor
 {
@@ -21,7 +21,7 @@ namespace Zoie.Petrichor
         {
             ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
 
-            if (activity.Type == ActivityTypes.Message)
+            if (activity.GetActivityType() == ActivityTypes.Message)
             {
                 Activity typingReply = activity.CreateReply();
                 typingReply.Type = ActivityTypes.Typing;
@@ -81,36 +81,32 @@ namespace Zoie.Petrichor
 
         private async Task HandleSystemMessageAsync(Activity activity, ConnectorClient connector)
         {
-            var replyMessage = activity.CreateReply();
+            var reply = activity.CreateReply();
 
-            if (activity.Type == ActivityTypes.DeleteUserData)
+            switch (activity.GetActivityType())
             {
-                await DialogsHelper.DeleteConversationAndUserDataAsync(activity);
-                replyMessage.Text = "Allright! I no longer have any of your personal information.";
-                await connector.Conversations.ReplyToActivityAsync(replyMessage);
+                case ActivityTypes.DeleteUserData:
+                    await DialogsHelper.DeleteConversationAndUserDataAsync(activity);
+                    reply.Text = "Allright! I no longer have any of your personal information.";
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                    return;
+                case ActivityTypes.ConversationUpdate:
+                    if (activity.MembersAdded?.FirstOrDefault()?.Id?.StartsWith("ZoieBot") ?? false)
+                    {
+                        reply.Text = "Hi there!";
+                        await connector.Conversations.ReplyToActivityAsync(reply);
+                    }
+                    return;
+                case ActivityTypes.ContactRelationUpdate:
+                    // Handle add/remove from contact lists
+                    // Activity.From + Activity.Action represent what happened
+                    return;
+                case ActivityTypes.Typing:
+                    // Handle knowing that the user is typing
+                    return;
+                case ActivityTypes.Ping:
+                    return;
             }
-            else if (activity.Type == ActivityTypes.ConversationUpdate)
-            {
-                if (activity.MembersAdded?.FirstOrDefault()?.Id?.StartsWith("ZoieBot") ?? false)
-                {
-                    replyMessage.Text = "Hi there!";
-                    await connector.Conversations.ReplyToActivityAsync(replyMessage);
-                }
-            }
-            else if (activity.Type == ActivityTypes.ContactRelationUpdate)
-            {
-                // Handle add/remove from contact lists
-                // Activity.From + Activity.Action represent what happened
-            }
-            else if (activity.Type == ActivityTypes.Typing)
-            {
-                // Handle knowing tha the user is typing
-            }
-            else if (activity.Type == ActivityTypes.Ping)
-            {
-            }
-            
-            return;
         }
     }
 }

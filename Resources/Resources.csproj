@@ -45,6 +45,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="FilterReplies.Designer.cs">
+      <DependentUpon>FilterReplies.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="GiftReplies.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -86,6 +91,12 @@
     <EmbeddedResource Include="Emojis.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Emojis.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterReplies.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FilterReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>

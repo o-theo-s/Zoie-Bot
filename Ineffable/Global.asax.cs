@@ -4,35 +4,38 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Internals;
 using Autofac;
 using Microsoft.Bot.Connector;
+using System.Configuration;
 using System.Reflection;
 
-namespace Ineffable
+namespace Zoie.Ineffable
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            this.RegisterBotModules();
+        }
 
-            Conversation.UpdateContainer(
-            builder =>
+        private void RegisterBotModules()
+        {
+            //var store = new TableBotDataStore(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString, tableName: "ineffabledata");
+            Conversation.UpdateContainer(builder =>
             {
                 builder.RegisterModule(new AzureModule(Assembly.GetExecutingAssembly()));
 
-                // Bot Storage: Here we register the state storage for your bot. 
-                // Default store: volatile in-memory store - Only for prototyping!
-                // We provide adapters for Azure Table, CosmosDb, SQL Azure, or you can implement your own!
-                // For samples and documentation, see: [https://github.com/Microsoft/BotBuilder-Azure](https://github.com/Microsoft/BotBuilder-Azure)
-                var store = new InMemoryDataStore();
+                var store = new TableBotDataStore(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
 
-                // Other storage options
-                // var store = new TableBotDataStore("...DataStorageConnectionString..."); // requires Microsoft.BotBuilder.Azure Nuget package 
-                // var store = new DocumentDbBotDataStore("cosmos db uri", "cosmos db key"); // requires Microsoft.BotBuilder.Azure Nuget package 
-
+                //Table bot data
                 builder.Register(c => store)
-                    .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
-                    .AsSelf()
-                    .SingleInstance();
+                          .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
+                          .AsSelf()
+                          .SingleInstance();
+
+                builder.Register(c => new CachingBotDataStore(store, CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency))
+                           .As<IBotDataStore<BotData>>()
+                           .AsSelf()
+                           .InstancePerLifetimeScope();
             });
         }
     }

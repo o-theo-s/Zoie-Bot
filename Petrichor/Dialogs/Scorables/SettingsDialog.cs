@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Zoie.Helpers;
 using Zoie.Petrichor.Dialogs.LUIS;
+using Zoie.Petrichor.Dialogs.Main;
 using Zoie.Petrichor.Models.Entities;
 
 namespace Zoie.Petrichor.Dialogs.Scorables
@@ -71,7 +72,9 @@ namespace Zoie.Petrichor.Dialogs.Scorables
                 case string text when text.StartsWith("__settings_age_change"):
                     await this.AgeChangeAsync(context, result);
                     return;
-
+                case "__menu_settings_shop_filters":
+                    await context.Forward(new FiltersDialog(), EndAsync, activity);
+                    return;
                 case "__menu_settings_change_location":
                     await this.LocationAskAsync(context, result);
                     return;

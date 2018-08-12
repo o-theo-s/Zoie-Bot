@@ -8,12 +8,14 @@ using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
 using Zoie.Petrichor.Dialogs.Main;
 
+#pragma warning disable CS1998
+
 namespace Zoie.Petrichor.Dialogs.LUIS
 {
-    //European LUIS - ZoieV2
+    //European LUIS - Petrichor
     [LuisModel(
         modelID:            "b6e28f40-f13e-4dc8-97f6-5f740d8e783f ", 
-        subscriptionKey:    "283025aac3e04d7d8946a64ab4a77f80", 
+        subscriptionKey:    "93a4fbd5cdb24f67b24c1f4cd85322bf", 
         domain:             "westeurope.api.cognitive.microsoft.com")]
     [Serializable]
     public class GlobalLuisDialog<TResult> : LuisDialog<TResult>

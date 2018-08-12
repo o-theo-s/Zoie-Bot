@@ -117,16 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EntryIneffable" xml:space="preserve">
-    <value>Hi {name}. My name is Zoie and I will be your travel assistant.</value>
+  <data name="AskColor" xml:space="preserve">
+    <value>Which color would you prefer?</value>
   </data>
-  <data name="EntryPetrichor" xml:space="preserve">
-    <value>Hi {name}. My name is Zoie and I am a true believer in people looking their best at every moment of their life!</value>
+  <data name="AskManufacturer" xml:space="preserve">
+    <value>What about the brand?</value>
   </data>
-  <data name="FollowUpsIneffable" xml:space="preserve">
-    <value>I can search a place for you to stay and enjoy your vacations!</value>
+  <data name="AskPriceRange" xml:space="preserve">
+    <value>Specify the price range you want (e.g. 'Less than 50 euros', or 'between 20 and 100')</value>
   </data>
-  <data name="FollowUpsPetrichor" xml:space="preserve">
-    <value>I am here to help you look sharp and stylish, discover your next outfit or find a gift for that special person.</value>
+  <data name="AskSize" xml:space="preserve">
+    <value>Finally, what is the size you want?</value>
+  </data>
+  <data name="AskType" xml:space="preserve">
+    <value>What type of apparel are you looking for?</value>
   </data>
 </root>

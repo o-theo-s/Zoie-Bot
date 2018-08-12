@@ -11,7 +11,7 @@ namespace Zoie.Helpers
 {
     public static class TablesHelper
     {
-        private static CloudStorageAccount StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString);
+        private static CloudStorageAccount StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
         private static CloudTableClient TableClient = StorageAccount.CreateCloudTableClient();
 
         public static CloudTable GetTableReference(string tableName)
@@ -22,7 +22,6 @@ namespace Zoie.Helpers
         public static class TableNames
         {
             public const string UsersData = "usersdata";
-            public const string OccasionSets = "occasionsets";
         }
     }
 }

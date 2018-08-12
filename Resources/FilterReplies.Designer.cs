@@ -22,14 +22,14 @@ namespace Zoie.Resources.DialogReplies {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class HandshakeReplies {
+    public class FilterReplies {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal HandshakeReplies() {
+        internal FilterReplies() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Zoie.Resources.DialogReplies {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Zoie.Resources.HandshakeReplies", typeof(HandshakeReplies).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Zoie.Resources.FilterReplies", typeof(FilterReplies).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,47 @@ namespace Zoie.Resources.DialogReplies {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {name}. My name is Zoie and I will be your travel assistant..
+        ///   Looks up a localized string similar to Which color would you prefer?.
         /// </summary>
-        public static string EntryIneffable {
+        public static string AskColor {
             get {
-                return ResourceManager.GetString("EntryIneffable", resourceCulture);
+                return ResourceManager.GetString("AskColor", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {name}. My name is Zoie and I am a true believer in people looking their best at every moment of their life!.
+        ///   Looks up a localized string similar to What about the brand?.
         /// </summary>
-        public static string EntryPetrichor {
+        public static string AskManufacturer {
             get {
-                return ResourceManager.GetString("EntryPetrichor", resourceCulture);
+                return ResourceManager.GetString("AskManufacturer", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I can search a place for you to stay and enjoy your vacations!.
+        ///   Looks up a localized string similar to Specify the price range you want (e.g. &apos;Less than 50 euros&apos;, or &apos;between 20 and 100&apos;).
         /// </summary>
-        public static string FollowUpsIneffable {
+        public static string AskPriceRange {
             get {
-                return ResourceManager.GetString("FollowUpsIneffable", resourceCulture);
+                return ResourceManager.GetString("AskPriceRange", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I am here to help you look sharp and stylish, discover your next outfit or find a gift for that special person..
+        ///   Looks up a localized string similar to Finally, what is the size you want?.
         /// </summary>
-        public static string FollowUpsPetrichor {
+        public static string AskSize {
             get {
-                return ResourceManager.GetString("FollowUpsPetrichor", resourceCulture);
+                return ResourceManager.GetString("AskSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What type of apparel are you looking for?.
+        /// </summary>
+        public static string AskType {
+            get {
+                return ResourceManager.GetString("AskType", resourceCulture);
             }
         }
     }

@@ -57,7 +57,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 store = storesRoot.Stores[i];
                 if (string.IsNullOrWhiteSpace(store.ImageUrl))
-                    store.ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/zoie_logo.png";
+                    store.ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/zoie_logo.png";
                 reply.Attachments.Add(
                     new HeroCard()
                     {
@@ -71,7 +71,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                 {
                     Title = "Create Your Store!",
                     Subtitle = "Create your own messenger store for FREE, NOW!!",
-                    Images = new List<CardImage> { new CardImage { Url = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-create.jpg" } },
+                    Images = new List<CardImage> { new CardImage { Url = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/store-create.jpg" } },
                     Buttons = new List<CardAction> { new CardAction { Title = "Create", Type = ActionTypes.OpenUrl, Value = "http://zoie.io/sign-up.php" } }
                 }.ToAttachment());
 
@@ -191,21 +191,21 @@ namespace Zoie.Petrichor.Dialogs.Main
                     {
                         Title = "Shop",
                         Subtitle = "Let's start shopping!",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-shop.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/store-shop.jpg",
                         Buttons = new[] { new FacebookPostbackButton(title: "Shop", payload: "__store_shop") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Customer Service",
                         Subtitle = $"Do you want to learn more about {store.Name}?",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-info.jpg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/store-info.jpg",
                         Buttons = new[] { new FacebookPostbackButton(title: "More Info", payload: "__store_info") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Window Shopping",
                         Subtitle = $"View all the collections created by {store.Name}!",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/store-window.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/store-window.jpg",
                         Buttons = new[] { new FacebookPostbackButton(title: "View Collections", payload: "__store_window") }
                     }
                 };
@@ -270,6 +270,10 @@ namespace Zoie.Petrichor.Dialogs.Main
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+
+            await this.UnimplementedAsync(context, result);
+            return;
+
             context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
             reply.Text = "Let’s get this shopping started! What are you looking for?";
@@ -277,10 +281,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "T-shirts", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "t-shirt" })}" },
-                    new CardAction(){ Title = "Trousers", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "παντελόνι" })}" },
-                    new CardAction(){ Title = "Dresses", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "φόρεμα" })}" },
-                    new CardAction(){ Title = "Jeans", Type = ActionTypes.PostBack, Value = $"__shop_{JsonConvert.SerializeObject(new SearchModel{ Type = "τζιν" })}" },
+                    new CardAction(){ Title = "Filters", Type = ActionTypes.PostBack, Value = $"__menu_settings_shop_filters" }
                 }
             };
             await context.PostAsync(reply);
@@ -313,28 +314,28 @@ namespace Zoie.Petrichor.Dialogs.Main
                     {
                         Title = "Brands",
                         Subtitle = $"View all the available brands in {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-brands.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/cs-brands.jpg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=1", title: "Brands") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "About",
                         Subtitle = $"Learn more about {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-about.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/cs-about.jpg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=2", title: "About") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Returns Policy",
                         Subtitle = $"Learn everything you want to know about returns in {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-returns.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/cs-returns.jpg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=3", title: "Returns") }
                     },
                     new FacebookGenericTemplateContent()
                     {
                         Title = "Shipping",
                         Subtitle = $"View the available shipping ways, days to deliver and more about {store.Name}.",
-                        ImageUrl = "https://zoiebot.azurewebsites.net/Files/Images/Stores/cs-shipping.jpeg",
+                        ImageUrl = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Stores/cs-shipping.jpg",
                         Buttons = new[] { new FacebookUrlButton(url: ApiNames.CustomerService + $"?business_id={store.Id}&service_id=4", title: "Shipping") }
                     }
                 };
@@ -427,7 +428,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                             Subtitle = $"By {store.Name}",
                             Buttons = new[] { new FacebookPostbackButton(title: "View items", payload: $"__view_collection_{collection.Id}") },
                             ImageUrl = collection.ImageUrl ??
-                                $"https://zoiebot.azurewebsites.net/Files/Images/Occasions/Outdoor/{gender}/{i + 1}.jpg"
+                                $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Occasions/Outdoor/{gender}/{i + 1}.jpg"
                         });
                 }
 

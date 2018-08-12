@@ -25,8 +25,9 @@ namespace Zoie.Petrichor.Dialogs.Main
             var activity = await result as Activity;
             var reply = activity.CreateReply();
 
-            reply.Text = DialogsHelper.GetResourceValue<HandshakeReplies>("Entry", activity) + " " 
-                + DialogsHelper.GetResourceValue<HandshakeReplies>("FollowUps", activity);
+            reply.Text = DialogsHelper.GetResourceValue<HandshakeReplies>("EntryPetrichor", activity);
+            await context.PostAsync(reply);
+            reply.Text = DialogsHelper.GetResourceValue<HandshakeReplies>("FollowUpsPetrichor", activity);
             await context.PostAsync(reply);
 
 

@@ -12,6 +12,7 @@ using Zoie.Petrichor.Dialogs.LUIS;
 using Zoie.Helpers;
 using Zoie.Helpers.Channels.Facebook.Library;
 using Zoie.Resources.DialogReplies;
+using System.Configuration;
 
 namespace Zoie.Petrichor.Dialogs.Main
 {
@@ -149,7 +150,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                             Subtitle = $"By {collection.StoreName}",
                             Buttons = new[] { new FacebookPostbackButton(title: "View items", payload: $"__view_collection_{collection.Id}") },
                             ImageUrl = collection.ImageUrl ??
-                                $"https://zoiebot.azurewebsites.net/Files/Images/Occasions/{occasion.Name}/{gender}/{i+1}.jpg"
+                                $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Occasions/{occasion.Name}/{gender}/{i+1}.jpg"
                         });
                 }
 

@@ -3,14 +3,17 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace Ineffable.Dialogs
+namespace Zoie.Ineffable.Dialogs
 {
     [Serializable]
     public class RootDialog : IDialog<object>
     {
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            if (context.UserData.TryGetValue("HasHandshaked", out bool handshaked) && handshaked)
+                context.Wait(MessageReceivedAsync);
+            else
+                context.Call(new HandshakeDialog(), MessageReceivedAsync);
 
             return Task.CompletedTask;
         }
@@ -19,13 +22,10 @@ namespace Ineffable.Dialogs
         {
             var activity = await result as Activity;
 
-            // Calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+            //var form = new FormDialog<HotelReservation>(new HotelReservation(activity.ChannelData), HotelReservation.BuildForm);
+            await context.Forward(new HotelDialog(), MessageReceivedAsync, activity.AsMessageActivity());
 
-            // Return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
-
-            context.Wait(MessageReceivedAsync);
+            return;
         }
     }
 }
