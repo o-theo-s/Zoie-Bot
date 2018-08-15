@@ -1,0 +1,7 @@
+Keyword	Keyword (Greek)	Synonyms
+XS		"extra small, XS, xs"
+S		"small, S, s"
+M		"medium, M, m"
+L		"large, L, l"
+XL		"extra large, XL, xl"
+XXL		"extra extra large, XXL, xxl"

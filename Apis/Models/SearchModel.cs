@@ -6,6 +6,7 @@ namespace Zoie.Apis.Models
     [Serializable]
     public class SearchModel
     {
+        public int? Page { get; set; }
         public string Manufacturer { get; set; }
         public string Type { get; set; }
         public string Gender { get; set; }

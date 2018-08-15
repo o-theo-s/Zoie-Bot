@@ -26,7 +26,8 @@ namespace Zoie.Apis
             {
                 urlAttributes += "?";
                 foreach (var attribute in attributes)
-                    urlAttributes += $"{attribute.Key}={attribute.Value}&";
+                    if (attribute.Value != null)
+                        urlAttributes += $"{attribute.Key}={attribute.Value}&";
                 urlAttributes = urlAttributes.Remove(urlAttributes.Length - 1);
             }
 

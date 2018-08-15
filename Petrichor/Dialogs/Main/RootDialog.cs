@@ -22,9 +22,9 @@ namespace Zoie.Petrichor.Dialogs.Main
             ResumeAfter<object> resumeAfter;
             if (context.PrivateConversationData.ContainsKey("Referral"))
                 resumeAfter = ReferralReceivedAsync;
-            else if (context.PrivateConversationData.ContainsKey("MenuStore"))
+            else if (context.PrivateConversationData.ContainsKey("MenuNew"))
             {
-                context.PrivateConversationData.RemoveValue("MenuStore");
+                context.PrivateConversationData.RemoveValue("MenuNew");
                 resumeAfter = FunctionSelectedAsync;
             }
             else
@@ -66,9 +66,10 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "Occasion ✨", Type = ActionTypes.PostBack, Value = "__function_occasion" },
-                    //new CardAction(){ Title = "Gift 🎁", Type = ActionTypes.PostBack, Value = "__function_gift" },
-                    new CardAction(){ Title = "Stores 🏬", Type = ActionTypes.PostBack, Value = "__function_store" }
+                    new CardAction(){ Title = "✨ Occasion", Type = ActionTypes.PostBack, Value = "__function_occasion" },
+                    //new CardAction(){ Title = "🎁 Gift", Type = ActionTypes.PostBack, Value = "__function_gift" },
+                    new CardAction(){ Title = "🏬 Stores", Type = ActionTypes.PostBack, Value = "__function_store" },
+                    new CardAction() { Title = "🎨 Shop by filters", Type = ActionTypes.PostBack, Value = "__function_shop" }
                 }
             };
             await context.PostAsync(reply);
@@ -103,6 +104,9 @@ namespace Zoie.Petrichor.Dialogs.Main
                     return;
                 case string cmd when cmd == "__function_store" || cmd == "__menu_new_store":
                     await context.Forward(new StoreDialog(), SelectFunctionAsync, activity);
+                    return;
+                case string cmd when cmd == "__function_shop" || cmd == "__menu_new_shop_by_filters":
+                    await context.Forward(new ShopDialog(), SelectFunctionAsync, activity);
                     return;
                 case "__personality_answer":
                     await context.PostAsync("Please select one of the options below:");

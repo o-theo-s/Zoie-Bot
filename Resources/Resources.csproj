@@ -40,6 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dictionaries\Apparels\Colors.Designer.cs">
+      <DependentUpon>Colors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Dictionaries\Apparels\Types.Designer.cs">
+      <DependentUpon>Types.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Emojis.Designer.cs">
       <DependentUpon>Emojis.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -88,6 +98,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dictionaries\Apparels\Colors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Colors.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.Dictionaries.Apparels</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dictionaries\Apparels\Types.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Types.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.Dictionaries.Apparels</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Emojis.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Emojis.Designer.cs</LastGenOutput>

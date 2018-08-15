@@ -164,17 +164,23 @@ namespace Zoie.Helpers
             return replies.ElementAt(new Random().Next(replies.Length));
         }
 
-        public static bool TryGetResourceValue<ResourceType>(string resourceName, out string reply, IMessageActivity activity = null)
+        public static bool TryGetResourceValue<ResourceType>(string resourceName, out string resourceValue, IMessageActivity activity = null)
         {
+            if (string.IsNullOrEmpty(resourceName))
+            {
+                resourceValue = string.Empty;
+                return false;
+            }
+
             bool tore;
             try
             {
-                reply = GetResourceValue<ResourceType>(resourceName, activity);
+                resourceValue = GetResourceValue<ResourceType>(resourceName, activity);
                 tore = true;
             }
             catch
             {
-                reply = string.Empty;
+                resourceValue = string.Empty;
                 tore = false;
             }
 

@@ -59,9 +59,9 @@ namespace Zoie.Petrichor
                     if (activity.Text?.StartsWith("__menu_new") ?? false)
                     {
                         await DialogsHelper.ResetConversationAsync(activity, deletePrivateConversationData: true);
-                        if (activity.Text == "__menu_new_store")
-                            await DialogsHelper.SetValueInPrivateConversationDataAsync(activity, "MenuStore", true);
-                        await connector.Conversations.ReplyToActivityAsync(activity.CreateReply("Hope you liked what I showed you! ☺"));
+                        if (activity.Text == "__menu_new_store" || activity.Text == "__menu_new_shop_by_filters")
+                            await DialogsHelper.SetValueInPrivateConversationDataAsync(activity, "MenuNew", true);
+                        //await connector.Conversations.ReplyToActivityAsync(activity.CreateReply("Hope you liked what I showed you! ☺"));
                     }
                 }
 

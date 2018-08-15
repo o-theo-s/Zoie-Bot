@@ -1,0 +1,64 @@
+Keyword	Keyword (Greek)	Synonyms
+adidas		adidas
+nike		nike
+reebok		reebok
+converse		"converse, all star"
+vans		vans
+puma		puma
+new balance		new balance
+fila		fila
+champion		champion
+toms		toms
+asics		asics
+tommy hilfiger		tommy hilfiger
+crocs		crocs
+uggs		"uggs, ugg"
+levis		levis
+timberland		timberland
+polo ralph lauren		polo ralph lauren
+american eagle		american eagle
+valentino		valentino
+geox		geox
+superga		superga
+migato		migato
+nautica		nautica
+guess		guess
+gucci		gucci
+hogan		hogan
+tods		tods
+dr. martens		dr. martens
+lacoste		lacoste
+calvin klein		"calvin klein, CK"
+hollister		hollister
+ambercrombie & fitch		ambercrombie & fitch
+benetton		benetton
+supreme		supreme
+juicy couture		juicy couture
+hugo boss		hugo boss
+billabong		billabong
+dkny		"dona karan, dkny"
+giorgio armani		"armani, giorgio armani, emporio armani"
+prada		prada
+dior		dior
+lee		lee
+superdry		superdry
+moschino		moschino
+diesel		diesel
+dsquared		"dsquared, d2"
+pepe jeans		pepe jeans
+topshop		topshop
+max mara		max mara
+the north face		the north face
+kappa		kappa
+hermes		hermes
+gap		gap
+michael kors		"michael kors, kors"
+mcm		mcm
+kem		kem
+desigual		desigual
+ted baker		ted baker
+roberto cavalli		roberto cavalli
+celio		celio
+nautica		nautica
+pierre cardin		pierre cardin
+miss sixty		miss sixty

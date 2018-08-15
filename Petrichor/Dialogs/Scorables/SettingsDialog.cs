@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web;
 using Zoie.Helpers;
 using Zoie.Petrichor.Dialogs.LUIS;
 using Zoie.Petrichor.Dialogs.Main;
@@ -71,9 +70,6 @@ namespace Zoie.Petrichor.Dialogs.Scorables
                     return;
                 case string text when text.StartsWith("__settings_age_change"):
                     await this.AgeChangeAsync(context, result);
-                    return;
-                case "__menu_settings_shop_filters":
-                    await context.Forward(new FiltersDialog(), EndAsync, activity);
                     return;
                 case "__menu_settings_change_location":
                     await this.LocationAskAsync(context, result);
@@ -449,12 +445,9 @@ namespace Zoie.Petrichor.Dialogs.Scorables
 
         private async Task EndAsync(IDialogContext context, IAwaitable<object> result)
         {
-            var activity = await result as Activity;
-            var reply = activity.CreateReply("Alright! Let's continue from where we left of..");
+            await context.PostAsync("Alright! Let's continue from where we left of..");
 
-            await context.PostAsync(reply);
-
-            context.Done(activity);
+            context.Done(await result);
         }
     }
 }

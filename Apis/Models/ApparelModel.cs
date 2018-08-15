@@ -68,5 +68,11 @@ namespace Zoie.Apis.Models
     {
         [JsonProperty(PropertyName = "products")]
         public List<Apparel> Apparels { get; set; }
+
+        [JsonProperty(PropertyName = "remaining_pages")]
+        public string RemainingPagesString { get; set; }
+
+        [JsonIgnore]
+        public int RemainingPages { get { int.TryParse(this.RemainingPagesString, out int remPages); return remPages; } }
     }
 }

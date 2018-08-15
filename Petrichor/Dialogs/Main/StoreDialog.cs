@@ -13,6 +13,7 @@ using Zoie.Petrichor.Dialogs.LUIS;
 using Zoie.Petrichor.Models;
 using Zoie.Helpers;
 using Zoie.Helpers.Channels.Facebook.Library;
+using static Zoie.Petrichor.Dialogs.Main.FiltersDialog;
 
 namespace Zoie.Petrichor.Dialogs.Main
 {
@@ -111,6 +112,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                     return;
                 case "__store_shop":
                     context.ConversationData.RemoveValue("WindowShopNextPage");
+                    context.PrivateConversationData.RemoveValue("Filters");
                     if (context.UserData.ContainsKey("HasPersonalized") && context.UserData.GetValue<bool>("HasPersonalized"))
                         await this.SelectShopCategoryAsync(context, result);
                     else
@@ -150,6 +152,12 @@ namespace Zoie.Petrichor.Dialogs.Main
                 case string text when text.StartsWith("__feedback_rate"):
                     await this.FeedbackRateAsync(context, result);
                     return;
+                case "__store_shop_filters":
+                    await context.Forward(new FiltersDialog(), this.ShowSearchResultsAsync, activity);
+                    return;
+                case "__search_results_show_more":
+                    await this.ShowSearchResultsAsync(context, result);
+                    return;
                 case "__personality_answer":
                 case "__continue":
                     var lastSubdialog = context.PrivateConversationData.GetValue<string>("LastStoreSubdialog");
@@ -161,6 +169,9 @@ namespace Zoie.Petrichor.Dialogs.Main
                     if ( reshowLastSubdialog.Name == nameof(this.WindowShopAsync) 
                             && context.ConversationData.TryGetValue("WindowShopNextPage", out currentPage))
                         context.ConversationData.SetValue("WindowShopNextPage", currentPage - 1);
+                    if (reshowLastSubdialog.Name == nameof(this.ShowSearchResultsAsync)
+                            && context.ConversationData.TryGetValue("SearchResultsNextPage", out currentPage))
+                        context.ConversationData.SetValue("SearchResultsNextPage", currentPage - 1);
 
                     await (Task) reshowLastSubdialog.Invoke(this, new object[] { context, result });
                     return;
@@ -271,8 +282,11 @@ namespace Zoie.Petrichor.Dialogs.Main
             var activity = await result as Activity;
             var reply = activity.CreateReply();
 
-            await this.UnimplementedAsync(context, result);
-            return;
+            if (context.PrivateConversationData.ContainsKey("Filters"))
+            {
+                await this.ShowSearchResultsAsync(context, result);
+                return;
+            }
 
             context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
 
@@ -281,7 +295,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "Filters", Type = ActionTypes.PostBack, Value = $"__menu_settings_shop_filters" }
+                    new CardAction(){ Title = "Filters", Type = ActionTypes.PostBack, Value = $"__store_shop_filters" }
                 }
             };
             await context.PostAsync(reply);
@@ -293,6 +307,66 @@ namespace Zoie.Petrichor.Dialogs.Main
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastStoreSubdialog", GeneralHelper.GetActualAsyncMethodName());
+
+            var filters = context.PrivateConversationData.GetValue<Dictionary<string, string>>("Filters");
+            context.ConversationData.TryGetValue("SearchResultsNextPage", out int currentPage);
+
+            SearchModel searchAttributes = new SearchModel
+            {
+                Gender = context.UserData.GetValue<string>("Gender") == "Female" ? "0" : "1",
+                Manufacturer = filters[Filters.Manufacturer.ToString().ToLower()],
+                Page = currentPage,
+                Shop = context.PrivateConversationData.GetValue<Store>("StoreSelected").Id,
+                Size = filters[Filters.Size.ToString().ToLower()]
+            };
+            if (DialogsHelper.TryGetResourceValue<Resources.Dictionaries.Apparels.Colors>(filters[Filters.Color.ToString().ToLower()], out string color))
+                searchAttributes.Color = color;
+            if (DialogsHelper.TryGetResourceValue<Resources.Dictionaries.Apparels.Types>(filters[Filters.Type.ToString().ToLower()], out string type))
+                searchAttributes.Type = type;
+            if (int.TryParse(filters["max_price"], out int maxPrice))
+                searchAttributes.Max_Price = maxPrice;
+            if (int.TryParse(filters["min_price"], out int minPrice))
+                searchAttributes.Min_Price = minPrice;
+            
+            var searchApi = new API<ApparelsRoot>();
+            ApparelsRoot apparelsRoot = await searchApi.CallAsync(searchAttributes.GetAttributesDictionary());
+            if (apparelsRoot == null)
+            {
+                searchAttributes.Page = currentPage = 0;
+                apparelsRoot = await searchApi.CallAsync(searchAttributes.GetAttributesDictionary());
+            }
+            context.ConversationData.SetValue("SearchResultsNextPage", currentPage + 1);
+
+            reply.Text = $"Here's what I found (page {currentPage + 1} of {apparelsRoot.RemainingPages + currentPage + 1}):";
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            foreach (var apparel in apparelsRoot.Apparels)
+            {
+                reply.Attachments.Add(
+                    new HeroCard()
+                    {
+                        Title = GeneralHelper.CapitalizeFirstLetter(apparel.Name),
+                        Images = new List<CardImage> { new CardImage { Url = apparel.ImageUrl } },
+                        Subtitle = apparel.Price + "€",
+                        Buttons = new List<CardAction> { new CardAction { Title = "Buy", Type = ActionTypes.OpenUrl, Value = apparel.ProductUrl } },
+                        Tap = new CardAction { Type = ActionTypes.OpenUrl, Value = apparel.ProductUrl }
+                    }.ToAttachment());
+            }
+            reply.SuggestedActions = new SuggestedActions()
+            {
+                Actions = new List<CardAction>()
+                {
+                    new CardAction(){ Title = apparelsRoot.RemainingPages > 0 ? "Next page" : "First page", Type = ActionTypes.PostBack, Value = "__search_results_show_more" },
+                    new CardAction(){ Title = "Change filters", Type = ActionTypes.PostBack, Value = "__store_shop_filters" },
+                    new CardAction(){ Title = "Back to store", Type = ActionTypes.PostBack, Value = "__store_select" }
+                }
+            };
+            if (apparelsRoot.RemainingPages == 0 && currentPage == 0)
+                reply.SuggestedActions.Actions.RemoveAt(0);
+
+            await context.PostAsync(reply);
+
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task CustomerServiceAsync(IDialogContext context, IAwaitable<object> result)

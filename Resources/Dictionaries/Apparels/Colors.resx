@@ -117,19 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AskColor" xml:space="preserve">
-    <value>Which color would you prefer?</value>
+  <data name="black" xml:space="preserve">
+    <value>μαύρο</value>
   </data>
-  <data name="AskManufacturer" xml:space="preserve">
-    <value>What about the brand?</value>
+  <data name="blue" xml:space="preserve">
+    <value>μπλε</value>
   </data>
-  <data name="AskPriceRange" xml:space="preserve">
-    <value>Specify the price range you want (e.g. 'Less than 50 euros', or 'between 20 and 100 euros')</value>
+  <data name="brown" xml:space="preserve">
+    <value>καφέ</value>
   </data>
-  <data name="AskSize" xml:space="preserve">
-    <value>Finally, what is the size you want?</value>
+  <data name="green" xml:space="preserve">
+    <value>πράσινο</value>
   </data>
-  <data name="AskType" xml:space="preserve">
-    <value>What type of apparel are you looking for?</value>
+  <data name="grey" xml:space="preserve">
+    <value>γκρι</value>
+  </data>
+  <data name="orange" xml:space="preserve">
+    <value>πορτοκαλί</value>
+  </data>
+  <data name="pink" xml:space="preserve">
+    <value>ροζ</value>
+  </data>
+  <data name="purple" xml:space="preserve">
+    <value>μωβ</value>
+  </data>
+  <data name="red" xml:space="preserve">
+    <value>κόκκινο</value>
+  </data>
+  <data name="white" xml:space="preserve">
+    <value>άσπρο</value>
+  </data>
+  <data name="yellow" xml:space="preserve">
+    <value>κίτρινο</value>
   </data>
 </root>

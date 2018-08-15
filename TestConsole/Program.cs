@@ -13,19 +13,29 @@ namespace Zoie.TestConsole
     {
         static void Main(string[] args)
         {
-            SearchModel search = new SearchModel
-            {
-                Color = "μαύρο",
-                Gender = "άντρας",
-                Max_Price = 100
-            };
-            var attr = search.GetAttributesDictionary();
+            ApiUtilitiesAsync().Wait();
 
-            var searchApparelsApi = new API<ApparelsRoot>();
-            var apparelsRoot = searchApparelsApi.CallAsync(attr).Result;
-
-            Console.WriteLine("End\n");
+            Console.WriteLine("End");
             Console.ReadKey();
+        }
+
+        static async Task ApiUtilitiesAsync()
+        {
+            var productsApi = new API<ApparelsRoot>();
+
+            SearchModel searchAttributes = new SearchModel
+            {
+                Type = "jacket",
+                Color = Resources.Dictionaries.Apparels.Colors.black
+            };
+
+            ApparelsRoot apparelsRoot = await productsApi.CallAsync(searchAttributes.GetAttributesDictionary());
+        }
+
+        static async Task WitUtilitiesAsync()
+        {
+            var wit = new Wit();
+            await Wit.PostEntityAsync("apparel_type", @"Wit Dictionary\types.txt", metadataBase: "__filters_type_");
         }
     }
 }

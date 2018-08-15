@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Zoie.Resources.DialogReplies {
+namespace Zoie.Resources.Dictionaries.Apparels {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Zoie.Resources.DialogReplies {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class FilterReplies {
+    public class Colors {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal FilterReplies() {
+        internal Colors() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Zoie.Resources.DialogReplies {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Zoie.Resources.FilterReplies", typeof(FilterReplies).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Zoie.Resources.Dictionaries.Apparels.Colors", typeof(Colors).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,101 @@ namespace Zoie.Resources.DialogReplies {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Which color would you prefer?.
+        ///   Looks up a localized string similar to μαύρο.
         /// </summary>
-        public static string AskColor {
+        public static string black {
             get {
-                return ResourceManager.GetString("AskColor", resourceCulture);
+                return ResourceManager.GetString("black", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What about the brand?.
+        ///   Looks up a localized string similar to μπλε.
         /// </summary>
-        public static string AskManufacturer {
+        public static string blue {
             get {
-                return ResourceManager.GetString("AskManufacturer", resourceCulture);
+                return ResourceManager.GetString("blue", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify the price range you want (e.g. &apos;Less than 50 euros&apos;, or &apos;between 20 and 100 euros&apos;).
+        ///   Looks up a localized string similar to καφέ.
         /// </summary>
-        public static string AskPriceRange {
+        public static string brown {
             get {
-                return ResourceManager.GetString("AskPriceRange", resourceCulture);
+                return ResourceManager.GetString("brown", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Finally, what is the size you want?.
+        ///   Looks up a localized string similar to πράσινο.
         /// </summary>
-        public static string AskSize {
+        public static string green {
             get {
-                return ResourceManager.GetString("AskSize", resourceCulture);
+                return ResourceManager.GetString("green", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What type of apparel are you looking for?.
+        ///   Looks up a localized string similar to γκρι.
         /// </summary>
-        public static string AskType {
+        public static string grey {
             get {
-                return ResourceManager.GetString("AskType", resourceCulture);
+                return ResourceManager.GetString("grey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to πορτοκαλί.
+        /// </summary>
+        public static string orange {
+            get {
+                return ResourceManager.GetString("orange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ροζ.
+        /// </summary>
+        public static string pink {
+            get {
+                return ResourceManager.GetString("pink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to μωβ.
+        /// </summary>
+        public static string purple {
+            get {
+                return ResourceManager.GetString("purple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to κόκκινο.
+        /// </summary>
+        public static string red {
+            get {
+                return ResourceManager.GetString("red", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to άσπρο.
+        /// </summary>
+        public static string white {
+            get {
+                return ResourceManager.GetString("white", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to κίτρινο.
+        /// </summary>
+        public static string yellow {
+            get {
+                return ResourceManager.GetString("yellow", resourceCulture);
             }
         }
     }

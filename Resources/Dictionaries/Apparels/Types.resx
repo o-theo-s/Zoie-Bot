@@ -117,19 +117,151 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AskColor" xml:space="preserve">
-    <value>Which color would you prefer?</value>
+  <data name="backpack_bag" xml:space="preserve">
+    <value>σακίδιο πλάτης</value>
   </data>
-  <data name="AskManufacturer" xml:space="preserve">
-    <value>What about the brand?</value>
+  <data name="blazer" xml:space="preserve">
+    <value>σπορ σακάκι</value>
   </data>
-  <data name="AskPriceRange" xml:space="preserve">
-    <value>Specify the price range you want (e.g. 'Less than 50 euros', or 'between 20 and 100 euros')</value>
+  <data name="blouse" xml:space="preserve">
+    <value>γυναικεία μπλούζα</value>
   </data>
-  <data name="AskSize" xml:space="preserve">
-    <value>Finally, what is the size you want?</value>
+  <data name="boho_skirt" xml:space="preserve">
+    <value>φούστα μπόχο</value>
   </data>
-  <data name="AskType" xml:space="preserve">
-    <value>What type of apparel are you looking for?</value>
+  <data name="boots" xml:space="preserve">
+    <value>μπότες</value>
+  </data>
+  <data name="bra" xml:space="preserve">
+    <value>σουτιέν</value>
+  </data>
+  <data name="camisole" xml:space="preserve">
+    <value>καζάκα</value>
+  </data>
+  <data name="cardigan" xml:space="preserve">
+    <value>πλεκτή ζακέτα</value>
+  </data>
+  <data name="coat" xml:space="preserve">
+    <value>παλτό</value>
+  </data>
+  <data name="corset" xml:space="preserve">
+    <value>κορσές</value>
+  </data>
+  <data name="dress" xml:space="preserve">
+    <value>φόρεμα</value>
+  </data>
+  <data name="dress_shirt" xml:space="preserve">
+    <value>μπλούζα φόρεμα</value>
+  </data>
+  <data name="flip_flops" xml:space="preserve">
+    <value>σαγιονάρες</value>
+  </data>
+  <data name="handbag" xml:space="preserve">
+    <value>τσάντα χειρός</value>
+  </data>
+  <data name="heels" xml:space="preserve">
+    <value>τακούνια</value>
+  </data>
+  <data name="hoodie" xml:space="preserve">
+    <value>φούτερ</value>
+  </data>
+  <data name="hose" xml:space="preserve">
+    <value>καλσόν</value>
+  </data>
+  <data name="jacket" xml:space="preserve">
+    <value>ζακέτα</value>
+  </data>
+  <data name="jeans" xml:space="preserve">
+    <value>τζιν</value>
+  </data>
+  <data name="jean_skirt" xml:space="preserve">
+    <value>φούστα τζιν</value>
+  </data>
+  <data name="jewelry" xml:space="preserve">
+    <value>κόσμημα</value>
+  </data>
+  <data name="messenger_bag" xml:space="preserve">
+    <value>τσάντα ταχυδρόμου</value>
+  </data>
+  <data name="pajamas" xml:space="preserve">
+    <value>πιτζάμες</value>
+  </data>
+  <data name="panties" xml:space="preserve">
+    <value>κιλότα</value>
+  </data>
+  <data name="peep_toes" xml:space="preserve">
+    <value>peep toes</value>
+  </data>
+  <data name="platforms" xml:space="preserve">
+    <value>πλατφόρμες</value>
+  </data>
+  <data name="polo" xml:space="preserve">
+    <value>polo</value>
+  </data>
+  <data name="sandals" xml:space="preserve">
+    <value>σανδάλια</value>
+  </data>
+  <data name="scarf" xml:space="preserve">
+    <value>κασκόλ</value>
+  </data>
+  <data name="shapewear" xml:space="preserve">
+    <value>καλσόν</value>
+  </data>
+  <data name="shirt" xml:space="preserve">
+    <value>πουκάμισο</value>
+  </data>
+  <data name="shoes" xml:space="preserve">
+    <value>παπούτσια</value>
+  </data>
+  <data name="shorts" xml:space="preserve">
+    <value>βερμούδα</value>
+  </data>
+  <data name="shoulder_bag" xml:space="preserve">
+    <value>τσάντα ώμου</value>
+  </data>
+  <data name="skirt" xml:space="preserve">
+    <value>φούστα</value>
+  </data>
+  <data name="sleepwear" xml:space="preserve">
+    <value>πιτζάμες</value>
+  </data>
+  <data name="socks" xml:space="preserve">
+    <value>κάλτσες</value>
+  </data>
+  <data name="suit" xml:space="preserve">
+    <value>κοστούμι</value>
+  </data>
+  <data name="suspenders" xml:space="preserve">
+    <value>τιράντες</value>
+  </data>
+  <data name="swimwear" xml:space="preserve">
+    <value>μαγιώ</value>
+  </data>
+  <data name="tie" xml:space="preserve">
+    <value>γραβάτα</value>
+  </data>
+  <data name="top" xml:space="preserve">
+    <value>μπλούζα</value>
+  </data>
+  <data name="trousers" xml:space="preserve">
+    <value>παντελόνι</value>
+  </data>
+  <data name="tunic" xml:space="preserve">
+    <value>χιτώνας</value>
+  </data>
+  <data name="t__shirt" xml:space="preserve">
+    <value>μπλούζα</value>
+  </data>
+  <data name="undershirt" xml:space="preserve">
+    <value>εσώρουχο</value>
+  </data>
+  <data name="underwear" xml:space="preserve">
+    <value>εσώρουχο</value>
+  </data>
+  <data name="wallet" xml:space="preserve">
+    <value>πορτοφόλι</value>
+  </data>
+  <data name="wedding_dress" xml:space="preserve">
+    <value>νυφικό</value>
   </data>
 </root>
