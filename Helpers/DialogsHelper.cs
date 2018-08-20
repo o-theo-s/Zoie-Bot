@@ -128,7 +128,7 @@ namespace Zoie.Helpers
 
         public static async Task<List<CardAction>> GetOccasionSuggestedActionsAsync()
         {
-            var occasionsApi = new API<OccasionsRoot>();
+            var occasionsApi = new ApiCaller<OccasionsRoot>();
             OccasionsRoot occasionsRoot = await occasionsApi.CallAsync();
 
             List<CardAction> suggestedActions = new List<CardAction>(occasionsRoot.Occasions.Count);

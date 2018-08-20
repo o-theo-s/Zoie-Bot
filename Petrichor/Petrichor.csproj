@@ -359,9 +359,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Apis\Apis.csproj">
+    <ProjectReference Include="..\Apis\External-Apis.csproj">
       <Project>{7135d5fe-4e56-4a89-801f-598b0d5b4d37}</Project>
-      <Name>Apis</Name>
+      <Name>External-Apis</Name>
     </ProjectReference>
     <ProjectReference Include="..\Helpers\Helpers.csproj">
       <Project>{ac8182f7-5754-4ae6-abf3-522df9c1d993}</Project>

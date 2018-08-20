@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API.cs" />
+    <Compile Include="ApiCaller.cs" />
     <Compile Include="Models\ApparelModel.cs" />
     <Compile Include="Models\CollectionModel.cs" />
     <Compile Include="Models\OccasionModel.cs" />

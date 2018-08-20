@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Zoie.Apis
 {
-    public class API<T>
+    public class ApiCaller<T>
     {
         private static HttpClient Client { get; set; } = new HttpClient() { BaseAddress = new Uri("http://zoie.io/API/") };
         private string CallbackURL { get; set; }
 
-        public API()
+        public ApiCaller()
         {
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

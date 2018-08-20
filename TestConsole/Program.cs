@@ -21,7 +21,7 @@ namespace Zoie.TestConsole
 
         static async Task ApiUtilitiesAsync()
         {
-            var productsApi = new API<ApparelsRoot>();
+            var productsApi = new ApiCaller<ApparelsRoot>();
 
             SearchModel searchAttributes = new SearchModel
             {

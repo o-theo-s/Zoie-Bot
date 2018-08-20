@@ -99,7 +99,7 @@ namespace Zoie.Petrichor.Dialogs.Main
 
             context.ConversationData.TryGetValue("StoresNextPage", out int currentPage);
 
-            var storesApi = new API<StoresRoot>();
+            var storesApi = new ApiCaller<StoresRoot>();
             var storesRoot = await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", currentPage.ToString() } })
                 ?? await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", (currentPage = 0).ToString() } });
             context.ConversationData.SetValue("StoresNextPage", currentPage + 1);
@@ -170,7 +170,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             if (int.TryParse(filters["min_price"], out int minPrice))
                 searchAttributes.Min_Price = minPrice;
 
-            var searchApi = new API<ApparelsRoot>();
+            var searchApi = new ApiCaller<ApparelsRoot>();
             ApparelsRoot apparelsRoot = await searchApi.CallAsync(searchAttributes.GetAttributesDictionary());
             if (apparelsRoot == null)
             {

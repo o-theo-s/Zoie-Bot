@@ -47,7 +47,7 @@ namespace Zoie.Petrichor.Dialogs.Main
 
             context.ConversationData.TryGetValue("StoresNextPage", out int currentPage);
 
-            var storesApi = new API<StoresRoot>();
+            var storesApi = new ApiCaller<StoresRoot>();
             var storesRoot = await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", currentPage.ToString() } })
                 ?? await storesApi.CallAsync(new Dictionary<string, string>(1) { { "page", (currentPage = 0).ToString() } });
             context.ConversationData.SetValue("StoresNextPage", currentPage + 1);
@@ -135,7 +135,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                     searchModel.Gender = gender == "Male" ? "άνδρας" : "γυναίκα";
                     context.ConversationData.SetValue("SearchModel", searchModel);
 
-                    var searchApparelsApi = new API<ApparelsRoot>();
+                    var searchApparelsApi = new ApiCaller<ApparelsRoot>();
                     var apparelsRoot = await searchApparelsApi.CallAsync(searchModel.GetAttributesDictionary());
 
                     await this.UnimplementedAsync(context, result);
@@ -153,6 +153,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                     await this.FeedbackRateAsync(context, result);
                     return;
                 case "__store_shop_filters":
+                    context.ConversationData.RemoveValue("SearchResultsNextPage");
                     await context.Forward(new FiltersDialog(), this.ShowSearchResultsAsync, activity);
                     return;
                 case "__search_results_show_more":
@@ -329,7 +330,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             if (int.TryParse(filters["min_price"], out int minPrice))
                 searchAttributes.Min_Price = minPrice;
             
-            var searchApi = new API<ApparelsRoot>();
+            var searchApi = new ApiCaller<ApparelsRoot>();
             ApparelsRoot apparelsRoot = await searchApi.CallAsync(searchAttributes.GetAttributesDictionary());
             if (apparelsRoot == null)
             {
@@ -348,7 +349,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                         Title = GeneralHelper.CapitalizeFirstLetter(apparel.Name),
                         Images = new List<CardImage> { new CardImage { Url = apparel.ImageUrl } },
                         Subtitle = apparel.Price + "€",
-                        Buttons = new List<CardAction> { new CardAction { Title = "Buy", Type = ActionTypes.OpenUrl, Value = apparel.ProductUrl } },
+                        Buttons = new List<CardAction> { new CardAction { Title = "Details & Buy", Type = ActionTypes.OpenUrl, Value = apparel.ProductUrl } },
                         Tap = new CardAction { Type = ActionTypes.OpenUrl, Value = apparel.ProductUrl }
                     }.ToAttachment());
             }
@@ -452,7 +453,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             string gender = context.UserData.GetValue<string>("Gender");
             context.ConversationData.TryGetValue("WindowShopNextPage", out int currentPage);
 
-            var collectionsApi = new API<CollectionsRoot>();
+            var collectionsApi = new ApiCaller<CollectionsRoot>();
             var apiParams = new Dictionary<string, string>(3)
             {
                 { "page", currentPage.ToString() },
@@ -548,7 +549,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             else if (!context.PrivateConversationData.TryGetValue("LastStoreCollectionViewed", out collectionId))
                 await this.WindowShopAsync(context, result);
 
-            var collectionApparelsApi = new API<CollectionApparelsRoot>();
+            var collectionApparelsApi = new ApiCaller<CollectionApparelsRoot>();
             var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
 
             reply.Text = "Here you are!";

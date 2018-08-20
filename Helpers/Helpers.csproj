@@ -125,9 +125,9 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Apis\Apis.csproj">
+    <ProjectReference Include="..\Apis\External-Apis.csproj">
       <Project>{7135d5fe-4e56-4a89-801f-598b0d5b4d37}</Project>
-      <Name>Apis</Name>
+      <Name>External-Apis</Name>
     </ProjectReference>
     <ProjectReference Include="..\Resources\Resources.csproj">
       <Project>{f3fe352f-bbc2-4d57-8bf2-7cd34634ce04}</Project>

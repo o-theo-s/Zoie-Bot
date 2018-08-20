@@ -9,11 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{F3FE352F-BBC2-4D57-8BF2-7CD34634CE04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apis", "Apis\Apis.csproj", "{7135D5FE-4E56-4A89-801F-598B0D5B4D37}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "External-Apis", "External-Apis\External-Apis.csproj", "{7135D5FE-4E56-4A89-801F-598B0D5B4D37}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{07759093-F630-473E-8AE8-8BE7AD32CE9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ineffable", "Ineffable\Ineffable.csproj", "{894A4513-C01C-434C-ADA2-66795A5ACB39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petrichor-Apis", "Petrichor-Apis\Petrichor-Apis.csproj", "{79F1E38A-D432-42BC-970A-141B7FE02AA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{894A4513-C01C-434C-ADA2-66795A5ACB39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79F1E38A-D432-42BC-970A-141B7FE02AA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79F1E38A-D432-42BC-970A-141B7FE02AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79F1E38A-D432-42BC-970A-141B7FE02AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79F1E38A-D432-42BC-970A-141B7FE02AA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

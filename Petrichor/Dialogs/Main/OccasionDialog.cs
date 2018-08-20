@@ -101,7 +101,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             string gender = context.UserData.GetValue<string>("Gender");
             context.ConversationData.TryGetValue("CollectionsNextPage", out int currentPage);
 
-            var collectionsApi = new API<CollectionsRoot>();
+            var collectionsApi = new ApiCaller<CollectionsRoot>();
             var apiParams = new Dictionary<string, string>(3)
             {
                 { "occasion_id", occasion.Id },
@@ -196,7 +196,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             else if (!context.PrivateConversationData.TryGetValue("LastOccasionCollectionViewed", out collectionId))
                 await this.CollectionsForOccasionAsync(context, result);
 
-            var collectionApparelsApi = new API<CollectionApparelsRoot>();
+            var collectionApparelsApi = new ApiCaller<CollectionApparelsRoot>();
             var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
 
             reply.Text = "Here you are!";
