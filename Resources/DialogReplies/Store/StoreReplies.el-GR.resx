@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutBtn" xml:space="preserve">
+    <value>Πληροφορίες</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Μάθετε περισσότερα σχετικά με το κατάστημα {store}.</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Πληροφορίες</value>
+  </data>
+  <data name="BackToStoreBtn" xml:space="preserve">
+    <value>Πίσω στο κατάστημα</value>
+  </data>
+  <data name="BetweenPriceRange" xml:space="preserve">
+    <value>μεταξύ {min} και {max} ευρώ</value>
+  </data>
+  <data name="BrandsSubtitle" xml:space="preserve">
+    <value>Δείτε όλες τις διαθέσιμες μάρκες στο {επιχείρηση}.</value>
+  </data>
+  <data name="BrandsTitle" xml:space="preserve">
+    <value>Μάρκες</value>
+  </data>
+  <data name="CanBeFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChangeFiltersBtn" xml:space="preserve">
+    <value>Αλλαγή φίλτρων</value>
+  </data>
+  <data name="ChangeStoreBtn" xml:space="preserve">
+    <value>Αλλαγή καταστήματος</value>
+  </data>
+  <data name="CollectionsEmpty" xml:space="preserve">
+    <value>Το {store} δεν έχει ακόμα συλλογές :/</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Επικοινωνήστε μαζί μας στο info@zoie.io και ένας αντιπρόσωπος θα μιλήσει απευθείας μαζί σας.</value>
+  </data>
+  <data name="ContactBtn" xml:space="preserve">
+    <value>Επικοινωνία</value>
+  </data>
+  <data name="CreateBtn" xml:space="preserve">
+    <value>Δημιουργία ηλεκτρονικού καταστήματος</value>
+  </data>
+  <data name="CreateSubtitle" xml:space="preserve">
+    <value>Δημιουργήστε το δικό σας κατάστημα στο Messenger ΔΩΡΕΑΝ, κάνοντας εγγραφή παρακάτω!!</value>
+  </data>
+  <data name="CreateTitle" xml:space="preserve">
+    <value>Δημιουργήστε το δικό σας κατάστημα!</value>
+  </data>
+  <data name="CustomerService" xml:space="preserve">
+    <value>Εξυπηρέτηση πελατών για το κατάστημα {store}:</value>
+  </data>
+  <data name="CustomerServiceBtn" xml:space="preserve">
+    <value>Πληροφορίες</value>
+  </data>
+  <data name="CustomerServiceSubtitle" xml:space="preserve">
+    <value>Θέλετε να μάθετε περισσότερα σχετικά με το {store};</value>
+  </data>
+  <data name="CustomerServiceTitle" xml:space="preserve">
+    <value>Εξυπηρέτηση πελατών</value>
+  </data>
+  <data name="FilterBrand" xml:space="preserve">
+    <value>Μάρκα</value>
+  </data>
+  <data name="FilterCategory" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="FilterChanged" xml:space="preserve">
+    <value>Το φίλτρο άλλαξε με επιτυχία!</value>
+  </data>
+  <data name="FilterColor" xml:space="preserve">
+    <value>Χρώμα</value>
+  </data>
+  <data name="FilteredSearch" xml:space="preserve">
+    <value>Φίλτρα αναζήτησης 🎨</value>
+  </data>
+  <data name="FilterGender" xml:space="preserve">
+    <value>Φύλο</value>
+  </data>
+  <data name="FilterPrice" xml:space="preserve">
+    <value>Τιμή</value>
+  </data>
+  <data name="FiltersAny" xml:space="preserve">
+    <value>Οτιδήποτε</value>
+  </data>
+  <data name="FiltersBrandQ" xml:space="preserve">
+    <value>Ποια μάρκα θα θέλατε να δείτε;</value>
+  </data>
+  <data name="FiltersCategoryA1" xml:space="preserve">
+    <value>Μπλουζάκια</value>
+  </data>
+  <data name="FiltersCategoryA2" xml:space="preserve">
+    <value>Παντελόνια</value>
+  </data>
+  <data name="FiltersCategoryA3" xml:space="preserve">
+    <value>Φόρεμα</value>
+  </data>
+  <data name="FiltersCategoryA4" xml:space="preserve">
+    <value>Τσάντες</value>
+  </data>
+  <data name="FiltersCategoryA5" xml:space="preserve">
+    <value>Παπούτσια</value>
+  </data>
+  <data name="FiltersCategoryA6" xml:space="preserve">
+    <value>Μπουφάν</value>
+  </data>
+  <data name="FiltersCategoryQ" xml:space="preserve">
+    <value>Τι τύπο ρούχων ψάχνετε;{\n}Μπορείτε επίσης να ορίσετε τη δική σας αναζήτηση.</value>
+  </data>
+  <data name="FiltersChangeQ" xml:space="preserve">
+    <value>Θέλετε να προσθέσετε ή να αλλάξετε κάτι;</value>
+  </data>
+  <data name="FiltersColorBlack" xml:space="preserve">
+    <value>Μάυρο</value>
+  </data>
+  <data name="FiltersColorBlue" xml:space="preserve">
+    <value>Μπλέ</value>
+  </data>
+  <data name="FiltersColorBrown" xml:space="preserve">
+    <value>Καφέ</value>
+  </data>
+  <data name="FiltersColorGreen" xml:space="preserve">
+    <value>Πράσινο</value>
+  </data>
+  <data name="FiltersColorOrange" xml:space="preserve">
+    <value>Πορτοκαλί</value>
+  </data>
+  <data name="FiltersColorPink" xml:space="preserve">
+    <value>Ρόζ</value>
+  </data>
+  <data name="FiltersColorPurple" xml:space="preserve">
+    <value>Μόβ</value>
+  </data>
+  <data name="FiltersColorQ" xml:space="preserve">
+    <value>Τι χρώμα σας ταιριάζει καλύτερα;{\n}Μπορείτε επίσης να ορίσετε τη δική σας επιλογή χρωμάτων.</value>
+  </data>
+  <data name="FiltersColorRed" xml:space="preserve">
+    <value>Κόκκινο</value>
+  </data>
+  <data name="FiltersColorWhite" xml:space="preserve">
+    <value>Λευκό</value>
+  </data>
+  <data name="FiltersCurrent" xml:space="preserve">
+    <value>Η επιλογή των φίλτρων σας είναι:{\n}</value>
+  </data>
+  <data name="FiltersEmpty" xml:space="preserve">
+    <value>Δεν έχουν επιλεγεί ακόμη φίλτρα. Τι θα θέλατε να προσθέσετε;</value>
+  </data>
+  <data name="FiltersGenderFemale" xml:space="preserve">
+    <value>Γυναικεία ενδυμασία</value>
+  </data>
+  <data name="FiltersGenderMale" xml:space="preserve">
+    <value>Αντρική ενδυμασία</value>
+  </data>
+  <data name="FiltersGenderQ" xml:space="preserve">
+    <value>Ψάχνετε για ανδρική ή γυναικεία ενδυμασία;</value>
+  </data>
+  <data name="FilterSize" xml:space="preserve">
+    <value>Μέγεθος</value>
+  </data>
+  <data name="FiltersPriceQ" xml:space="preserve">
+    <value>Ποιο είναι το εύρος τιμών που προτιμάτε;{\n}Μπορείτε επίσης να ορίσετε το δικό σας.</value>
+  </data>
+  <data name="FiltersSizeQ" xml:space="preserve">
+    <value>Ποιο είναι το μέγεθος που θέλετε;</value>
+  </data>
+  <data name="FiltersTypeOwn" xml:space="preserve">
+    <value>{\n}Μπορείτε επίσης να ορίσετε τη δική σας.</value>
+  </data>
+  <data name="HereYouAre" xml:space="preserve">
+    <value>Ορίστε!</value>
+  </data>
+  <data name="However" xml:space="preserve">
+    <value>Ωστόσο, μπορείτε να ρίξετε μια ματιά στα παρακάτω νέα προϊόντα!</value>
+  </data>
+  <data name="MoreStores" xml:space="preserve">
+    <value>Περισσότερα</value>
+  </data>
+  <data name="MoreThan" xml:space="preserve">
+    <value>περισσότερο από</value>
+  </data>
+  <data name="NoContinueBtn" xml:space="preserve">
+    <value>Όχι, ας συνεχίσουμε</value>
+  </data>
+  <data name="NotHave" xml:space="preserve">
+    <value>προς το παρόν δε διαθέτει</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>προϊόντα</value>
+  </data>
+  <data name="ReferralBtn" xml:space="preserve">
+    <value>Επισκεφθείτε</value>
+  </data>
+  <data name="ReferralSubtitle" xml:space="preserve">
+    <value>Ψωνίστε στο {store} μέσω της Zoie στο Messenger! Κάντε κλικ στο κουμπί παρακάτω για να ξεκινήσετε τις αγορές.</value>
+  </data>
+  <data name="ReferralTitle" xml:space="preserve">
+    <value>Το κατάστημα {store} είναι στο Messenger μέσω της Zoie, ένα AI Powered Marketplace!</value>
+  </data>
+  <data name="ReselectBtn" xml:space="preserve">
+    <value>Άλλο κατάστημα</value>
+  </data>
+  <data name="ResultsFound" xml:space="preserve">
+    <value>Δείτε τι βρήκα:</value>
+  </data>
+  <data name="ReturnsPolicyBtn" xml:space="preserve">
+    <value>Επιστροφές</value>
+  </data>
+  <data name="ReturnsPolicySubtitle" xml:space="preserve">
+    <value>Μάθετε όλα όσα θέλετε να γνωρίζετε σχετικά με τις επιστροφές στο {store}.</value>
+  </data>
+  <data name="ReturnsPolicyTitle" xml:space="preserve">
+    <value>Πολιτική Επιστροφών</value>
+  </data>
+  <data name="RevisitStores" xml:space="preserve">
+    <value>Δείτε ξανά ↩️</value>
+  </data>
+  <data name="SelectBtn" xml:space="preserve">
+    <value>Επιλογή</value>
+  </data>
+  <data name="SelectStore" xml:space="preserve">
+    <value>Ας διαλέξουμε ένα κατάστημα και ας αγοράσουμε κάποιο ρούχο για σήμερα!</value>
+  </data>
+  <data name="ShippingSubtitle" xml:space="preserve">
+    <value>Δείτε τους διαθέσιμους τρόπους αποστολής και τις ημέρες παράδοσης για το {store}.</value>
+  </data>
+  <data name="ShippingTitle" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="ShopBtn" xml:space="preserve">
+    <value>Αγορά</value>
+  </data>
+  <data name="ShopIntro" xml:space="preserve">
+    <value>Ας ξεκινήσουμε τα ψώνια! Τι θα θέλατε να βρείτε;</value>
+  </data>
+  <data name="ShopSubtitle" xml:space="preserve">
+    <value>Ας ξεκινήσουμε να ψωνίζουμε!</value>
+  </data>
+  <data name="ShopTitle" xml:space="preserve">
+    <value>Αγορά</value>
+  </data>
+  <data name="StoresBtn" xml:space="preserve">
+    <value>🏬 Καταστήματα</value>
+  </data>
+  <data name="TheMarketplace" xml:space="preserve">
+    <value>Η αγορά της Zoie</value>
+  </data>
+  <data name="ThereAreNo" xml:space="preserve">
+    <value>Δυστυχώς το κατάστημα δε διαθέτει</value>
+  </data>
+  <data name="TheStore" xml:space="preserve">
+    <value>Το κατάστημα</value>
+  </data>
+  <data name="ThisSize" xml:space="preserve">
+    <value>αυτού του μεγέθους</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>Όλα τα προϊόντα</value>
+  </data>
+  <data name="ViewItemsBtn" xml:space="preserve">
+    <value>Προβολή</value>
+  </data>
+  <data name="Wear" xml:space="preserve">
+    <value>ένδυση</value>
+  </data>
+  <data name="WindowCollectionSubtitle" xml:space="preserve">
+    <value>Προτάσεις μόδας από το {store}</value>
+  </data>
+  <data name="WindowCollectionTitle" xml:space="preserve">
+    <value>Βιτρίνες - {gender}</value>
+  </data>
+  <data name="WindowShoppingBtn" xml:space="preserve">
+    <value>Συλλογές</value>
+  </data>
+  <data name="WindowShoppingSubtitle" xml:space="preserve">
+    <value>Δείτε όλες τις συλλογές του {store}!</value>
+  </data>
+  <data name="WindowShoppingTitle" xml:space="preserve">
+    <value>Χαζεύω τις βιτρίνες</value>
+  </data>
+</root>

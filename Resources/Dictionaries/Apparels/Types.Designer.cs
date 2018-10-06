@@ -304,6 +304,15 @@ namespace Zoie.Resources.Dictionaries.Apparels {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to τσάντα.
+        /// </summary>
+        public static string purse {
+            get {
+                return ResourceManager.GetString("purse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to σανδάλια.
         /// </summary>
         public static string sandals {

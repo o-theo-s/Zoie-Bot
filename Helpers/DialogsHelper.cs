@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Text;
 using Zoie.Apis;
 using Zoie.Apis.Models;
 using Zoie.Resources.DialogReplies;
 using Newtonsoft.Json;
+using static Zoie.Helpers.GeneralHelper;
 
 namespace Zoie.Helpers
 {
@@ -62,70 +61,6 @@ namespace Zoie.Helpers
             }
         }
 
-
-        public static class ShoppingDialogHelper
-        {
-            public static void SearchMessageBuilder(ref StringBuilder stringBuilder, string value, string startWith = null, string endWith = null)
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    stringBuilder.Append(startWith);
-                    stringBuilder.Append($" {value}");
-                    stringBuilder.Append(endWith);
-                }
-            }
-        }
-
-        public static bool GetReplyForOccasion(string occasionType, ref Activity reply)
-        {
-            string[] replies;
-            Random replySelector = new Random();
-            switch (occasionType.ToLower())
-            {
-                case "work":
-                    replies = OccasionReplies.Work.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "wedding":
-                    replies = OccasionReplies.Wedding.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "university":
-                    replies = OccasionReplies.University.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "party":
-                    replies = OccasionReplies.Party.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "outdoor":
-                    replies = OccasionReplies.Outdoor.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "interview":
-                    replies = OccasionReplies.Interview.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "gym":
-                    replies = OccasionReplies.Gym.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                case "cocktail":
-                    replies = OccasionReplies.Cocktail.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-                    return true;
-                default:
-                    replies = OccasionReplies.UnknownOccasion.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
-                    reply.Text = replies.ElementAt(replySelector.Next(replies.Length));
-
-                    reply.SuggestedActions = new SuggestedActions()
-                    {
-                        Actions = DialogsHelper.GetOccasionSuggestedActionsAsync().Result
-                    };
-                    return false;
-            }
-        }
-
         public static async Task<List<CardAction>> GetOccasionSuggestedActionsAsync()
         {
             var occasionsApi = new ApiCaller<OccasionsRoot>();
@@ -135,7 +70,7 @@ namespace Zoie.Helpers
 
             foreach (var occasion in occasionsRoot.Occasions)
             {
-                DialogsHelper.TryGetResourceValue<Emojis>(occasion.Name, out string emoji);
+                TryGetResourceValue<Emojis>(occasion.Name, out string emoji, null);
                 suggestedActions.Add(
                     new CardAction()
                     {
@@ -148,23 +83,28 @@ namespace Zoie.Helpers
             return suggestedActions;
         }
 
-        public static string GetResourceValue<ResourceType>(string resourceName, IMessageActivity activity = null)
+        public static string GetResourceValue<ResourceType>(string resourceName, string locale, params string[] replacements)
         {
-            string resourceValue = typeof(ResourceType).GetProperty(resourceName).GetValue(null) as string;
+            if (resourceName.Contains('.'))
+                resourceName = resourceName.Split(new char[1] { '.' }, StringSplitOptions.RemoveEmptyEntries).Last();
 
-            if (activity != null)
+            string resourceValue = (typeof(ResourceType).GetProperty("ResourceManager").GetValue(null) as System.Resources.ResourceManager)
+                .GetString(resourceName, new System.Globalization.CultureInfo(locale?.Replace('_', '-') ?? "en-US"));
+
+            if (resourceValue.Contains("|||"))
             {
-                string firstName = activity.From?.Name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
-                string daytime = GeneralHelper.GetDaytime(activity.LocalTimestamp ?? activity.Timestamp);
-                resourceValue = resourceValue.Replace("{timeOfDay}", daytime).Replace("{name}", firstName);
+                string[] replies = resourceValue.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
+                resourceValue = replies.ElementAt(new Random().Next(replies.Length));
             }
 
-            string[] replies = resourceValue.Split(new string[1] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
+            var regex = new System.Text.RegularExpressions.Regex(@"\{(.*?)\}");
+            foreach (var replacement in replacements)
+                resourceValue = regex.Replace(resourceValue, replacement, 1);
 
-            return replies.ElementAt(new Random().Next(replies.Length));
+            return resourceValue;
         }
 
-        public static bool TryGetResourceValue<ResourceType>(string resourceName, out string resourceValue, IMessageActivity activity = null)
+        public static bool TryGetResourceValue<ResourceType>(string resourceName, out string resourceValue, string locale, params string[] replacements)
         {
             if (string.IsNullOrEmpty(resourceName))
             {
@@ -175,7 +115,7 @@ namespace Zoie.Helpers
             bool tore;
             try
             {
-                resourceValue = GetResourceValue<ResourceType>(resourceName, activity);
+                resourceValue = GetResourceValue<ResourceType>(resourceName, locale, replacements);
                 tore = true;
             }
             catch

@@ -8,6 +8,7 @@ using Microsoft.Bot.Builder.Dialogs.Internals;
 using Microsoft.Bot.Builder.Internals.Fibers;
 using System.Reflection;
 using System.Linq;
+using static Zoie.Helpers.TablesHelper;
 
 namespace Zoie.Petrichor
 {
@@ -21,12 +22,11 @@ namespace Zoie.Petrichor
 
         private void RegisterBotModules()
         {
-            //var store = new TableBotDataStore(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString, tableName: "botdata2");
             Conversation.UpdateContainer(builder =>
             {
                 builder.RegisterModule(new AzureModule(Assembly.GetExecutingAssembly()));
 
-                var store = new TableBotDataStore(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
+                var store = new TableBotDataStore(ConfigurationManager.AppSettings["AzureWebJobsStorage"], tableName: TableNames.BotData);
 
                 //Table bot data
                 builder.Register(c => store)

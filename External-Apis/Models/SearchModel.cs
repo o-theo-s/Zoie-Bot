@@ -11,8 +11,8 @@ namespace Zoie.Apis.Models
         public string Type { get; set; }
         public string Gender { get; set; }
         public string Color { get; set; }
-        public int? Min_Price { get; set; }
-        public int? Max_Price { get; set; }
+        public float? Min_Price { get; set; }
+        public float? Max_Price { get; set; }
         public string Size { get; set; }
         public string Style { get; set; }
         public string Shop { get; set; }

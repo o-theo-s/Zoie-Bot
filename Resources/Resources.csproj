@@ -50,48 +50,78 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Emojis.Designer.cs">
+    <Compile Include="DialogReplies\General\GeneralReplies.el-GR.Designer.cs">
+      <DependentUpon>GeneralReplies.el-GR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\General\GeneralReplies.Designer.cs">
+      <DependentUpon>GeneralReplies.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Emojis.Designer.cs">
       <DependentUpon>Emojis.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="FilterReplies.Designer.cs">
-      <DependentUpon>FilterReplies.resx</DependentUpon>
+    <Compile Include="DialogReplies\Handshake\HandshakeReplies.el-GR.Designer.cs">
+      <DependentUpon>HandshakeReplies.el-GR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="GiftReplies.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GiftReplies.resx</DependentUpon>
-    </Compile>
-    <Compile Include="HandshakeReplies.Designer.cs">
+    <Compile Include="DialogReplies\Handshake\HandshakeReplies.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HandshakeReplies.resx</DependentUpon>
     </Compile>
-    <Compile Include="OccasionReplies.Designer.cs">
+    <Compile Include="DialogReplies\Occasion\OccasionReplies.el-GR.Designer.cs">
+      <DependentUpon>OccasionReplies.el-GR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Occasion\OccasionReplies.Designer.cs">
       <DependentUpon>OccasionReplies.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="PersonalityReplies.Designer.cs">
+    <Compile Include="DialogReplies\Personalization\PersonalizationReplies.el-GR.Designer.cs">
+      <DependentUpon>PersonalizationReplies.el-GR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>PersonalityReplies.resx</DependentUpon>
     </Compile>
-    <Compile Include="PersonalizationReplies.Designer.cs">
+    <Compile Include="DialogReplies\Personalization\PersonalizationReplies.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PersonalizationReplies.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RootReplies.Designer.cs">
+    <Compile Include="DialogReplies\Root\RootReplies.el-GR.Designer.cs">
+      <DependentUpon>RootReplies.el-GR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Root\RootReplies.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RootReplies.resx</DependentUpon>
     </Compile>
-    <Compile Include="StoreReplies.Designer.cs">
+    <Compile Include="DialogReplies\Settings\SettingsReplies.el-GR.Designer.cs">
+      <DependentUpon>SettingsReplies.el-GR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Settings\SettingsReplies.Designer.cs">
+      <DependentUpon>SettingsReplies.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Store\StoreReplies.el-GR.Designer.cs">
+      <DependentUpon>StoreReplies.el-GR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DialogReplies\Store\StoreReplies.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>StoreReplies.resx</DependentUpon>
@@ -110,53 +140,85 @@
       <CustomToolNamespace>Zoie.Resources.Dictionaries.Apparels</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Emojis.resx">
+    <EmbeddedResource Include="DialogReplies\General\GeneralReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GeneralReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\General\GeneralReplies.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GeneralReplies.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Emojis.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Emojis.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FilterReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Handshake\HandshakeReplies.el-GR.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>FilterReplies.Designer.cs</LastGenOutput>
+      <LastGenOutput>HandshakeReplies.el-GR.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="OccasionReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Occasion\OccasionReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>OccasionReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Occasion\OccasionReplies.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>OccasionReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="StoreReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Personalization\PersonalizationReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PersonalizationReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Root\RootReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RootReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Settings\SettingsReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SettingsReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Settings\SettingsReplies.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SettingsReplies.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Store\StoreReplies.el-GR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StoreReplies.el-GR.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DialogReplies\Store\StoreReplies.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>StoreReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RootReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Root\RootReplies.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RootReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="PersonalizationReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Personalization\PersonalizationReplies.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PersonalizationReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="PersonalityReplies.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>PersonalityReplies.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HandshakeReplies.resx">
+    <EmbeddedResource Include="DialogReplies\Handshake\HandshakeReplies.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>HandshakeReplies.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GiftReplies.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>GiftReplies.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Zoie.Resources.DialogReplies</CustomToolNamespace>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,8 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Zoie.Petrichor.Models.Entities
 {
@@ -29,6 +26,5 @@ namespace Zoie.Petrichor.Models.Entities
         public DateTime SubscribedAt { get; set; }
         public string City { get; set; }
         public string Location { get; set; }
-        public string Style { get; set; }
     }
 }

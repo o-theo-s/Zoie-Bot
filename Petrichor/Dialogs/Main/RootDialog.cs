@@ -5,9 +5,15 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Microsoft.WindowsAzure.Storage.Table;
 using Zoie.Helpers;
-using Zoie.Petrichor.Dialogs.Main;
 using Zoie.Petrichor.Models;
-using Zoie.Petrichor.Dialogs.LUIS;
+using Zoie.Resources.DialogReplies;
+using static Zoie.Helpers.DialogsHelper;
+using static Zoie.Helpers.GeneralHelper;
+using static Zoie.Resources.DialogReplies.RootReplies;
+using static Zoie.Resources.DialogReplies.OccasionReplies;
+using static Zoie.Resources.DialogReplies.StoreReplies;
+using Zoie.Petrichor.Dialogs.Prefatory;
+using Zoie.Petrichor.Dialogs.NLU;
 
 namespace Zoie.Petrichor.Dialogs.Main
 {
@@ -57,19 +63,20 @@ namespace Zoie.Petrichor.Dialogs.Main
         private async Task SelectFunctionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply($"What do you have in mind for {GeneralHelper.GetDaytime(activity.LocalTimestamp ?? activity.Timestamp)}?");
+            var reply = activity.CreateReply();
+            context.UserData.TryGetValue("Locale", out string locale);
 
             context.ConversationData.Clear();
             context.PrivateConversationData.Clear();
 
+            reply.Text = GetResourceValue<RootReplies>(nameof(SelectFunction), locale, await GetDaytimeAsync(activity));
             reply.SuggestedActions = new SuggestedActions()
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "✨ Occasion", Type = ActionTypes.PostBack, Value = "__function_occasion" },
-                    //new CardAction(){ Title = "🎁 Gift", Type = ActionTypes.PostBack, Value = "__function_gift" },
-                    new CardAction(){ Title = "🏬 Stores", Type = ActionTypes.PostBack, Value = "__function_store" },
-                    new CardAction() { Title = "🎨 Shop by filters", Type = ActionTypes.PostBack, Value = "__function_shop" }
+                    new CardAction(){ Title = GetResourceValue<RootReplies>(nameof(MarketplaceBtn), locale), Type = ActionTypes.PostBack, Value = "__function_marketplace" },
+                    new CardAction(){ Title = GetResourceValue<OccasionReplies>(nameof(OccasionBtn), locale), Type = ActionTypes.PostBack, Value = "__function_occasion" },
+                    new CardAction(){ Title = GetResourceValue<StoreReplies>(nameof(StoresBtn), locale), Type = ActionTypes.PostBack, Value = "__function_store" },
                 }
             };
             await context.PostAsync(reply);
@@ -80,7 +87,7 @@ namespace Zoie.Petrichor.Dialogs.Main
         private async Task FunctionSelectedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            DialogsHelper.EventToMessageActivity(ref activity, ref result);
+            EventToMessageActivity(ref activity, ref result);
 
             if (!activity.Text.StartsWith("__"))
             {
@@ -88,35 +95,29 @@ namespace Zoie.Petrichor.Dialogs.Main
 
                 if (message.Contains("occasion"))
                     activity.Text = "__function_occasion";
-                else if (message.Contains("gift"))
-                    activity.Text = "__function_gift";
                 else if (message.Contains("store"))
                     activity.Text = "__function_store";
+                else if (message.Contains("marketplace"))
+                    activity.Text = "__function_marketplace";
             }
 
             switch (activity.Text)
             {
+                case "__function_marketplace":
+                    context.ConversationData.SetValue("MarketplaceSelected", true);
+                    await context.Forward(new StoreDialog(), SelectFunctionAsync, activity);
+                    return;
                 case "__function_occasion":
                     await context.Forward(new OccasionDialog(), SelectFunctionAsync, activity);
                     return;
-                case "__function_gift":
-                    await context.Forward(new GiftDialog(), SelectFunctionAsync, activity);
-                    return;
                 case string cmd when cmd == "__function_store" || cmd == "__menu_new_store":
                     await context.Forward(new StoreDialog(), SelectFunctionAsync, activity);
-                    return;
-                case string cmd when cmd == "__function_shop" || cmd == "__menu_new_shop_by_filters":
-                    await context.Forward(new ShopDialog(), SelectFunctionAsync, activity);
-                    return;
-                case "__personality_answer":
-                    await context.PostAsync("Please select one of the options below:");
-                    await SelectFunctionAsync(context, result);
                     return;
                 case "__continue":
                     await SelectFunctionAsync(context, result);
                     return;
                 default:
-                    await context.Forward(new GlobalLuisDialog<object>(), FunctionSelectedAsync, activity);
+                    await context.Forward(new PersonalityDialog(), SelectFunctionAsync, activity);
                     return;
             }
         }

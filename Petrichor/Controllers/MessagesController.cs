@@ -58,11 +58,13 @@ namespace Zoie.Petrichor
 
                     if (activity.Text?.StartsWith("__menu_new") ?? false)
                     {
-                        await DialogsHelper.ResetConversationAsync(activity, deletePrivateConversationData: true);
-                        if (activity.Text == "__menu_new_store" || activity.Text == "__menu_new_shop_by_filters")
+                        await DialogsHelper.ResetConversationAsync(activity, deletePrivateConversationData: false);
+                        if (activity.Text == "__menu_new_store")
                             await DialogsHelper.SetValueInPrivateConversationDataAsync(activity, "MenuNew", true);
                         //await connector.Conversations.ReplyToActivityAsync(activity.CreateReply("Hope you liked what I showed you! ☺"));
                     }
+                    else if (activity.Text == "__get_started__")
+                        await DialogsHelper.ResetConversationAsync(activity, deletePrivateConversationData: true);
                 }
 
                 if (activity.Text == null /*&& there are attachments*/)
@@ -70,6 +72,7 @@ namespace Zoie.Petrichor
                     //Process Attachments
                 }
 
+                await GeneralHelper.GetLocaleAsync(activity, update: false);
                 await Conversation.SendAsync(activity, () => new RootDialog());
             }
             else
@@ -103,8 +106,6 @@ namespace Zoie.Petrichor
                     return;
                 case ActivityTypes.Typing:
                     // Handle knowing that the user is typing
-                    return;
-                case ActivityTypes.Ping:
                     return;
             }
         }

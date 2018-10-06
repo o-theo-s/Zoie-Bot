@@ -54,7 +54,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Apis\External-Apis.csproj">
+    <ProjectReference Include="..\External-Apis\External-Apis.csproj">
       <Project>{7135d5fe-4e56-4a89-801f-598b0d5b4d37}</Project>
       <Name>External-Apis</Name>
     </ProjectReference>

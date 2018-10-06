@@ -264,4 +264,7 @@
   <data name="wedding_dress" xml:space="preserve">
     <value>νυφικό</value>
   </data>
+  <data name="purse" xml:space="preserve">
+    <value>τσάντα</value>
+  </data>
 </root>

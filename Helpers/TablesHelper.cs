@@ -1,10 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Configuration;
 
 namespace Zoie.Helpers
@@ -21,7 +16,8 @@ namespace Zoie.Helpers
 
         public static class TableNames
         {
-            public const string UsersData = "usersdata";
+            public static string UsersData { get { return ConfigurationManager.AppSettings["BotId"] == "Petrichor-Beta" ? "BetaUsersdata" : "usersdata"; } }
+            public static string BotData { get { return ConfigurationManager.AppSettings["BotId"] == "Petrichor-Beta" ? "BetaBotdata" : "botdata"; } }
         }
     }
 }

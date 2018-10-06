@@ -8,11 +8,18 @@ using Zoie.Apis.Models;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
-using Zoie.Petrichor.Dialogs.LUIS;
 using Zoie.Helpers;
 using Zoie.Helpers.Channels.Facebook.Library;
 using Zoie.Resources.DialogReplies;
 using System.Configuration;
+using static Zoie.Helpers.DialogsHelper;
+using static Zoie.Helpers.GeneralHelper;
+using static Zoie.Resources.DialogReplies.OccasionReplies;
+using static Zoie.Resources.DialogReplies.GeneralReplies;
+using Zoie.Petrichor.Dialogs.NLU;
+using Zoie.Petrichor.Dialogs.Main.Prefatory;
+
+#pragma warning disable CS0642 // Possible mistaken empty statement
 
 namespace Zoie.Petrichor.Dialogs.Main
 {
@@ -29,10 +36,12 @@ namespace Zoie.Petrichor.Dialogs.Main
         private async Task SelectOccasionAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply(DialogsHelper.GetResourceValue<OccasionReplies>("OccasionSelect", activity));
-            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
+            var reply = activity.CreateReply();
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GetActualAsyncMethodName());
+            context.UserData.TryGetValue("Locale", out string locale);
 
-            reply.SuggestedActions = new SuggestedActions() { Actions = await DialogsHelper.GetOccasionSuggestedActionsAsync() };
+            reply.Text = GetResourceValue<OccasionReplies>(nameof(OccasionSelect), locale, await GetDaytimeAsync(activity));
+            reply.SuggestedActions = new SuggestedActions() { Actions = await GetOccasionSuggestedActionsAsync() };
             await context.PostAsync(reply);
 
             context.Wait(MessageReceivedAsync);
@@ -41,8 +50,9 @@ namespace Zoie.Petrichor.Dialogs.Main
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            DialogsHelper.EventToMessageActivity(ref activity, ref result);
+            EventToMessageActivity(ref activity, ref result);
             var reply = activity.CreateReply();
+            context.UserData.TryGetValue("Locale", out string locale);
 
             switch (activity.Text)
             {
@@ -50,8 +60,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                     Occasion occasion = JsonConvert.DeserializeObject<Occasion>(activity.Text.Remove(0, "__occasion_".Length));
                     context.PrivateConversationData.SetValue("OccasionSelected", occasion);
 
-                    string resourceName = GeneralHelper.CapitalizeFirstLetter(occasion.Name);
-                    string occasionPhrase = DialogsHelper.GetResourceValue<OccasionReplies>(resourceName, activity);
+                    string occasionPhrase = GetResourceValue<OccasionReplies>(CapitalizeFirstLetter(occasion.Name), locale);
 
                     reply.Text = occasionPhrase;
                     await context.PostAsync(reply);
@@ -71,8 +80,8 @@ namespace Zoie.Petrichor.Dialogs.Main
                     context.ConversationData.Clear();
                     await this.SelectOccasionAsync(context, result);
                     return;
-                case string text when text.StartsWith("__feedback_rate"):
-                    await this.FeedbackRateAsync(context, result);
+                case string text when text.StartsWith("__feedback_"):
+                    await this.FeedbackAsync(context, result);
                     return;
                 case "__personality_answer":
                 case "__continue":
@@ -86,7 +95,7 @@ namespace Zoie.Petrichor.Dialogs.Main
                     await (Task) reshowLastSubdialog.Invoke(this, new object[] { context, result });
                     return;
                 default:
-                    await context.Forward(new OccasionLuisDialog(), MessageReceivedAsync, activity);
+                    await context.Forward(new WitOccasionDialog(), MessageReceivedAsync, activity);
                     return;
             }
         }
@@ -95,7 +104,8 @@ namespace Zoie.Petrichor.Dialogs.Main
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
-            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GetActualAsyncMethodName());
+            context.UserData.TryGetValue("Locale", out string locale);
 
             Occasion occasion = context.PrivateConversationData.GetValue<Occasion>("OccasionSelected");
             string gender = context.UserData.GetValue<string>("Gender");
@@ -114,12 +124,13 @@ namespace Zoie.Petrichor.Dialogs.Main
 
             if (collectionsRoot == null)
             {
-                reply.Text = $"Sorry, no collections found for {occasion.Name.ToLower()} :/";
+                reply.Text = GetResourceValue<OccasionReplies>(nameof(OccasionReplies.Error), locale, occasion.Name.ToLower());
                 reply.SuggestedActions = new SuggestedActions()
                 {
                     Actions = new List<CardAction>()
                     {
-                        new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                        new CardAction(){ Title = GetResourceValue<OccasionReplies>(nameof(OccasionBtn), locale),
+                            Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
                     }
                 };
                 await context.PostAsync(reply);
@@ -133,8 +144,10 @@ namespace Zoie.Petrichor.Dialogs.Main
                 {
                     new FacebookGenericTemplateContent()
                     {
-                        Title = GeneralHelper.CapitalizeFirstLetter(occasion.Name) + " for " + ((gender == "Male") ? "men" : "women"),
-                        Subtitle = $"Fashion suggestions for {occasion.Name.ToLower()} - Page {currentPage + 1}",
+                        Title = CapitalizeFirstLetter(occasion.Name) + " "
+                            + GetResourceValue<GeneralReplies>(nameof(ForGender), locale,
+                                GetResourceValue<GeneralReplies>((gender == "Male") ? nameof(Men) : nameof(Women), locale)),
+                        Subtitle = GetResourceValue<OccasionReplies>(nameof(CollectionSubtitle), locale, occasion.Name.ToLower()),
                         ImageUrl = occasion.ImageUrl
                     }
                 };
@@ -146,17 +159,19 @@ namespace Zoie.Petrichor.Dialogs.Main
                     contentsForCurrentPage.Add(
                         new FacebookGenericTemplateContent()
                         {
-                            Title = GeneralHelper.CapitalizeFirstLetter(collection.Title),
+                            Title = CapitalizeFirstLetter(collection.Title),
                             Subtitle = $"By {collection.StoreName}",
-                            Buttons = new[] { new FacebookPostbackButton(title: "View items", payload: $"__view_collection_{collection.Id}") },
+                            Buttons = new[] { new FacebookPostbackButton(
+                                title: GetResourceValue<OccasionReplies>(nameof(ViewItemsBtn), locale),
+                                payload: $"__view_collection_{collection.Id}") },
                             ImageUrl = collection.ImageUrl ??
                                 $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Occasions/{occasion.Name}/{gender}/{i+1}.jpg"
                         });
                 }
 
                 FacebookPostbackButton bottomPageButton = null;
-                if (!(currentPage == 0 && collectionsRoot.RemainingPages == 0))
-                    bottomPageButton = new FacebookPostbackButton(title: collectionsRoot.RemainingPages > 0 ? "Next page" : "First page", payload: "__more_collections");
+                if (!(currentPage == 0 && collectionsRoot.RemainingPages == 0) && collectionsRoot.RemainingPages > 0)
+                    bottomPageButton = new FacebookPostbackButton(title: GetResourceValue<GeneralReplies>(nameof(SeeMore), locale), payload: "__more_collections");
 
                 reply.ChannelData = ChannelsHelper.Facebook.Templates.CreateListTemplate(contentsForCurrentPage.ToArray(), bottomPageButton);
             }
@@ -173,7 +188,7 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                    new CardAction(){ Title = GetResourceValue<OccasionReplies>(nameof(OccasionBtn), locale), Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
                 }
             };
 
@@ -185,7 +200,8 @@ namespace Zoie.Petrichor.Dialogs.Main
         {
             var activity = await result as Activity;
             var reply = activity.CreateReply();
-            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
+            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GetActualAsyncMethodName());
+            context.UserData.TryGetValue("Locale", out string locale);
 
             string gender = context.UserData.GetValue<string>("Gender");
             string collectionId = null;
@@ -199,17 +215,22 @@ namespace Zoie.Petrichor.Dialogs.Main
             var collectionApparelsApi = new ApiCaller<CollectionApparelsRoot>();
             var collectionApparelsRoot = await collectionApparelsApi.CallAsync(new Dictionary<string, string>(1) { { "collection_id", collectionId } });
 
-            reply.Text = "Here you are!";
+            reply.Text = GetResourceValue<OccasionReplies>(nameof(ShowOccasionItems), locale);
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
             foreach (var apparel in collectionApparelsRoot.Items)
             {
                 reply.Attachments.Add(
                     new HeroCard()
                     {
-                        Title = GeneralHelper.CapitalizeFirstLetter(apparel.Name),
+                        Title = CapitalizeFirstLetter(apparel.Name),
                         Subtitle = apparel.PriceString + "€",
                         Images = new List<CardImage> { new CardImage { Url = apparel.ImageUrl } },
-                        Buttons = new List<CardAction> { new CardAction { Title = "Buy", Type = ActionTypes.OpenUrl, Value = apparel.Link } },
+                        Buttons = new List<CardAction>
+                        {
+                            new CardAction { Title = "👍", Type = ActionTypes.PostBack, Value = $"__feedback_{apparel.Id}_-2" },
+                            new CardAction { Title = "👎", Type = ActionTypes.PostBack, Value = $"__feedback_{apparel.Id}_-1" },
+                            new CardAction { Title = GetResourceValue<GeneralReplies>(nameof(DetailsAndBuy), locale), Type = ActionTypes.OpenUrl, Value = apparel.Link }
+                        },
                         Tap = new CardAction { Type = ActionTypes.OpenUrl, Value = apparel.Link }
                     }.ToAttachment());
             }
@@ -217,14 +238,13 @@ namespace Zoie.Petrichor.Dialogs.Main
             reply.Attachments.Add(
                 new HeroCard()
                 {
-                    Title = "Collection rate",
-                    Subtitle = "Did you like that set?",
-                    Images = new List<CardImage> { new CardImage { Url = "http://zoie.io/images/Brand-icon.png" } },
+                    Title = GetResourceValue<GeneralReplies>(nameof(FeedbackQ), locale),
+                    Images = new List<CardImage> { new CardImage { Url = $"{ConfigurationManager.AppSettings["BotServerUrl"]}/Files/Images/Occasions/Feedback/feedback.jpg" } },
                     Buttons = new List<CardAction>
                     {
-                        new CardAction { Title = "😍 Very much", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_3"},
-                        new CardAction { Title = "😐 So and so", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_2"},
-                        new CardAction { Title = "😒 Not at all", Type = ActionTypes.PostBack, Value = $"__feedback_rate_{collectionId}_1"},
+                        new CardAction { Title = GetResourceValue<GeneralReplies>(nameof(FeedbackA3), locale), Type = ActionTypes.PostBack, Value = $"__feedback_{collectionId}_3"},
+                        new CardAction { Title = GetResourceValue<GeneralReplies>(nameof(FeedbackA2), locale), Type = ActionTypes.PostBack, Value = $"__feedback_{collectionId}_2"},
+                        new CardAction { Title = GetResourceValue<GeneralReplies>(nameof(FeedbackA1), locale), Type = ActionTypes.PostBack, Value = $"__feedback_{collectionId}_1"}
                     }
                 }.ToAttachment());
 
@@ -232,8 +252,8 @@ namespace Zoie.Petrichor.Dialogs.Main
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
-                    new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                    new CardAction(){ Title = GetResourceValue<GeneralReplies>(nameof(SeeMore), locale), Type = ActionTypes.PostBack, Value = "__more_collections" },
+                    new CardAction(){ Title = GetResourceValue<OccasionReplies>(nameof(OccasionBtn), locale), Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
                 }
             };
 
@@ -242,30 +262,29 @@ namespace Zoie.Petrichor.Dialogs.Main
             context.Wait(MessageReceivedAsync);
         }
 
-        private async Task FeedbackRateAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task FeedbackAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            var reply = activity.CreateReply("Thank your for your feedback!");
-            context.PrivateConversationData.SetValue("LastOccasionSubdialog", GeneralHelper.GetActualAsyncMethodName());
+            var reply = activity.CreateReply();
+            //context.PrivateConversationData.SetValue("LastOccasionSubdialog", GetActualAsyncMethodName());
+            context.UserData.TryGetValue("Locale", out string locale);
 
-            string[] feedbackData = null;
-            if (activity.Text.StartsWith("__feedback_rate_"))
-                feedbackData = activity.Text.Remove(0, "__feedback_rate_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] feedbackData = activity.Text.Remove(0, "__feedback_".Length).Split(new char[1] { '_' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (feedbackData != null)
-            {
-                int collectionId = int.Parse(feedbackData[0]);
-                int rate = int.Parse(feedbackData[1]);
+            int id = int.Parse(feedbackData[0]);
+            int rate = int.Parse(feedbackData[1]);
+            if (rate > 0)
+                ;   //TODO: Feedback for collection
+            else
+                ;   //TODO: Feedback for apparel
 
-                //TODO: Store rate for collection
-            }
-
+            reply.Text = GetResourceValue<GeneralReplies>(nameof(FeedbackThanks), locale);
             reply.SuggestedActions = new SuggestedActions()
             {
                 Actions = new List<CardAction>()
                 {
-                    new CardAction(){ Title = "More Collections", Type = ActionTypes.PostBack, Value = "__more_collections" },
-                    new CardAction(){ Title = "Reselect occasion", Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
+                    new CardAction(){ Title = GetResourceValue<GeneralReplies>(nameof(SeeMore), locale), Type = ActionTypes.PostBack, Value = "__more_collections" },
+                    new CardAction(){ Title = GetResourceValue<OccasionReplies>(nameof(OccasionBtn), locale), Type = ActionTypes.PostBack, Value = "__reselect_occasion" }
                 }
             };
             await context.PostAsync(reply);
@@ -276,18 +295,11 @@ namespace Zoie.Petrichor.Dialogs.Main
         private async Task UnimplementedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
+            context.UserData.TryGetValue("Locale", out string locale);
 
-            await context.PostAsync("Feature not available yet in " + activity.ChannelId);
+            await context.PostAsync(GetResourceValue<GeneralReplies>(nameof(Unimplemented), locale, activity.ChannelId));
 
             await this.SelectOccasionAsync(context, result);
-        }
-
-        private async Task EndAsync(IDialogContext context, IAwaitable<object> result)
-        {
-            var activity = await result;
-
-            await context.PostAsync("Hope you liked what I showed you! ☺");
-            context.Done(activity);
         }
     }
 }
